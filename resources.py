@@ -7,6 +7,6 @@ class Resources:
 
     @staticmethod
     def load_textures():
-        grass = pygame.image.load("src/terrain/grass.png")
+        grass = pygame.image.load("src/terrain/grass.png").convert()
         grass = pygame.transform.scale(grass, (Configurations.tile_size, Configurations.tile_size))
         Resources.textures["grass"] = grass

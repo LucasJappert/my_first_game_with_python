@@ -39,22 +39,23 @@ class Game:
                     return
                 
             ScreenResources.surface.fill((0, 0, 0))
-            
             VisibleScreen.draw()
-
-            # # Obtiene el tamaño actual de la pantalla
-            # screen_size = pygame.display.get_surface().get_size()
-
-            # # Escala la superficie de buffer al tamaño de la pantalla
-            # scaled_surface = pygame.transform.scale(Game.buffer_surface, screen_size)
-
-            # # Dibuja la superficie escalada en la pantalla
-            # pygame.display.get_surface().blit(Game.surface, (0, 0))
-
-            # Actualiza la pantalla
-            pygame.display.flip()
+            _scale_and_blit()
         
         print("Game ended")
+
+def _scale_and_blit():
+    # Get the size of the screen
+    screen_size = pygame.display.get_surface().get_size()
+
+    # Scale the surface to the size of the screen
+    scaled_surface = pygame.transform.scale(ScreenResources.surface, screen_size)
+
+    # Draw the scaled surface to the screen
+    pygame.display.get_surface().blit(scaled_surface, (0, 0))
+
+    # Update the display
+    pygame.display.flip()
 
 def keyboad_checks():
     pressed_keys = pygame.key.get_pressed()
