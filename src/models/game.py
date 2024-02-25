@@ -1,61 +1,45 @@
-import math
 import pygame
-from src.utils.configurations import Configurations
 from src.models.camera import Camera
 from src.helpers.resources_helper import Resources
-import src.utils.variables as Variables
+import src.utils.camera_variables as camera_variables
+from src.helpers.my_logger_helper import MyLogger
 
 
 class Game:
-    window_surface: pygame.Surface = None
     textures: dict = {}
-
-    @staticmethod
-    def initialize():
+    running = False
+    camera: Camera = None
+    
+    def initialize(self):
         pygame.init()
 
-        pygame.display.set_caption("Game")
+        pygame.display.set_caption("My game")
 
+    def end(self):
+        self.running = False
 
-    @staticmethod
-    def start_game():
-        Game.initialize()
-        Camera.initialize()
+    def start(self):
+        self.initialize()
+        self.running = True
+        self.camera = Camera()
 
         Resources.load_textures()
 
         clock = pygame.time.Clock()
-        while True:
+        while self.running:
             clock.tick(60)
-            keyboad_checks()
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
                 
-            Camera.update()
+            self.camera.update()
 
-            Camera.draw()
-            _scale_and_blit()
+            self.camera.draw()
+            
+            handle_keyboard_events(self)
         
-        print("Game ended")
-
-def _scale_and_blit():
-    # Get the size of the screen
-    screen_size = pygame.display.get_surface().get_size()
-
-    # Scale the surface to the size of the screen
-    scaled_surface = pygame.transform.scale(Variables.Camera.surface, screen_size)
-
-    # Draw the scaled surface to the screen
-    pygame.display.get_surface().blit(scaled_surface, (0, 0))
-
-    # Update the display
-    pygame.display.flip()
-
-def keyboad_checks():
-    pressed_keys = pygame.key.get_pressed()
-    if pressed_keys[pygame.K_ESCAPE]:
         pygame.quit()
-        exit()
+        MyLogger.green("GAME ENDED!")
+
+def handle_keyboard_events(my_game: Game):
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                my_game.end()

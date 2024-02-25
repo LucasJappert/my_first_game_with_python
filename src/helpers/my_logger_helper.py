@@ -32,47 +32,38 @@ def is_primitive(value):
 class MyLogger:
     @staticmethod
     def red(message):
-        colored_message = f"{ConsoleColors.RED}MyLogger: {vars(message)}{ConsoleColors.RESET}"
-        print(colored_message)
-        logging.error(message)
+        MyLogger._print(message, ConsoleColors.RED)
 
     @staticmethod
     def orange(message):
-        colored_message = f"{ConsoleColors.ORANGE}MyLogger: {vars(message)}{ConsoleColors.RESET}"
-        print(colored_message)
-        logging.warning(message)
+        MyLogger._print(message, ConsoleColors.ORANGE)
 
     @staticmethod
     def blue(message):
-        colored_message = f"{ConsoleColors.BLUE}MyLogger: {vars(message)}{ConsoleColors.RESET}"
-        print(colored_message)
-        logging.info(message)
+        MyLogger._print(message, ConsoleColors.BLUE)
         
     @staticmethod
     def pink(message):
-        colored_message = f"{ConsoleColors.PINK}MyLogger: {vars(message)}{ConsoleColors.RESET}"
-        print(colored_message)
-        logging.info(message)
+        MyLogger._print(message, ConsoleColors.PINK)
     
     @staticmethod
     def yellow(message):
-        if is_primitive(message):
-            message = f"{ConsoleColors.YELLOW}MyLogger: {message}{ConsoleColors.RESET}"
-        else:
-            message = f"{ConsoleColors.YELLOW}MyLogger: {vars(message)}{ConsoleColors.RESET}"
-        print(message)
-        logging.info(message)
+        MyLogger._print(message, ConsoleColors.YELLOW)
 
     @staticmethod
     def green(message):
-        
-        colored_message = f"{ConsoleColors.GREEN}MyLogger: {vars(message)}{ConsoleColors.RESET}"
-        print(colored_message)
-        logging.info(message)
+        MyLogger._print(message, ConsoleColors.GREEN)
 
     @staticmethod
     def cyan(message):
-        colored_message = f"{ConsoleColors.CYAN}MyLogger: {vars(message)}{ConsoleColors.RESET}"
+        MyLogger._print(message, ConsoleColors.CYAN)
+
+    @staticmethod
+    def _print(message, color):
+        if is_primitive(message):
+            colored_message = f"{color}MyLogger: {message}{ConsoleColors.RESET}"
+        else:
+            colored_message = f"{color}MyLogger: {vars(message)}{ConsoleColors.RESET}"
         print(colored_message)
         logging.info(message)
 
