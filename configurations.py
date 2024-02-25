@@ -1,3 +1,12 @@
+import tkinter
+import models.utils_models as UtilsModels
+from helpers.my_logger import MyLogger
+
+root = tkinter.Tk()
+
 class Configurations:
     grid_size = [100, 100]
-    tile_size = 128
+    my_screen_size = UtilsModels.Point(root.winfo_screenwidth(), root.winfo_screenheight())
+
+    def __init__(self):
+        pass
