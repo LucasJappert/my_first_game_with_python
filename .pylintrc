@@ -1,0 +1,40 @@
+[MASTER]
+
+# Cambia el valor del 'reports' si deseas un informe más corto (noverbose) o más largo (full).
+reports = nosemantical,loc,mccabe,all
+
+[MESSAGES CONTROL]
+ # Sesactiva el mensaje C0114 (missing-module-docstring), ya que no todos los proyectos utilizan esta convención.
+disable = C0114
+disable = W0718
+
+# Desactiva el mensaje W0511 (fixme), ya que no todos los proyectos utilizan esta convención.
+disable = W0511
+
+[BASIC]
+
+# Establece el número máximo de caracteres por línea.
+max-line-length = 100
+
+# Habilita la verificación para convenciones de estilo (C), errores (E), advertencias (W), y mejoras (R).
+enable = C, E, W, R
+
+[FORMAT]
+
+# Define el formato de los mensajes de PyLint. Puedes personalizarlo según tus preferencias.
+msg-template = "{path}:{line}:{column}: {msg_id} {msg}"
+
+[DESIGN]
+
+# Activa la verificación de complejidad ciclomática (mccabe).
+max-complexity = 10
+
+[TYPECHECK]
+
+# Activa la comprobación de tipos si estás utilizando Python 3.6 o posterior y sigues el estilo de anotaciones de tipo PEP 484+.
+# Debes instalar el módulo mypy antes de habilitar esta opción.
+# check-decorators = yes
+# check-builtins = yes
+# warn-return-any = yes
+# warn-unused-ignores = yes
+
