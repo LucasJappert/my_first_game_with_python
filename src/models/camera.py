@@ -1,12 +1,12 @@
 import math
 import pygame
-import models.utils_models as UtilsModels
-from configurations import Configurations
-from resources import Resources
+import src.models.utils_models as UtilsModels
+from src.utils.configurations import Configurations
+from src.helpers.resources_helper import Resources
 from pygame.font import Font
-from helpers.my_logger import MyLogger
-import variables as Variables
-from models.fps import FPS
+from src.helpers.my_logger_helper import MyLogger
+import src.utils.variables as Variables
+from src.models.fps import FPS
 
 class Camera:
 

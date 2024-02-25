@@ -1,5 +1,5 @@
 import pygame
-import variables as Variables
+import src.utils.variables as Variables
 
 class FPS:
     last_ticks = 0

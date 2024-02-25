@@ -1,5 +1,5 @@
 import pygame
-import models.utils_models as UtilsModels
+import src.models.utils_models as UtilsModels
 from pygame.font import Font
 
 

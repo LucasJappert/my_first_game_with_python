@@ -1,6 +1,6 @@
 import tkinter
-import models.utils_models as UtilsModels
-from helpers.my_logger import MyLogger
+import src.models.utils_models as UtilsModels
+from helpers.my_logger_helper import MyLogger
 
 root = tkinter.Tk()
 

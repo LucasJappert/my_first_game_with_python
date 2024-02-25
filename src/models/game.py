@@ -1,9 +1,9 @@
 import math
 import pygame
-from configurations import Configurations
-from camera import Camera
-from resources import Resources
-import variables as Variables
+from src.utils.configurations import Configurations
+from src.models.camera import Camera
+from src.helpers.resources_helper import Resources
+import src.utils.variables as Variables
 
 
 class Game:
