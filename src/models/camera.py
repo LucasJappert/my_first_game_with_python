@@ -9,6 +9,7 @@ from src.models.fps import FPS
 import src.utils.camera_variables as camera_variables
 
 class Camera:
+    tilemap = None
 
     def __init__(self):
         camera_variables.position.x = 0
@@ -18,7 +19,7 @@ class Camera:
         camera_variables.surface = pygame.Surface((camera_variables.tiles.x * camera_variables.tile_size, camera_variables.tiles.y * camera_variables.tile_size))
         MyLogger.green(Configurations.my_screen_size)
         screen_size_80 = (math.trunc(Configurations.my_screen_size.x * 0.6), math.trunc(Configurations.my_screen_size.y * 0.6))
-        pygame.display.set_mode(screen_size_80, pygame.RESIZABLE)
+        pygame.display.set_mode(screen_size_80, pygame.RESIZABLE)   
         
     def update(self):
         FPS.set_fps()
@@ -45,14 +46,38 @@ def _scale_and_blit():
     # Update the display
     pygame.display.flip()
 
+
 def _draw_terrain():
+    # grass = Resources.textures["grass"]
+    # square = Resources.textures["square"]
+    # for x in range(camera_variables.tiles.x):
+    #     for y in range(camera_variables.tiles.y):
+    #         rect = pygame.Rect(x * camera_variables.tile_size, y * camera_variables.tile_size, camera_variables.tile_size, camera_variables.tile_size)
+    #         camera_variables.surface.blit(grass, rect)
+    #         if camera_variables.draw_grid:
+    #             camera_variables.surface.blit(square, rect)
+
+    # Dibujar el tilemap en la superficie de la cámara
+    if Camera.tilemap is None:
+        Camera.tilemap = create_tilemap()
+    camera_variables.surface.blit(Camera.tilemap, (0, 0))
+
+def create_tilemap():
+    # Crear una nueva superficie para el tilemap
+    tilemap = pygame.Surface((camera_variables.tiles.x * camera_variables.tile_size, camera_variables.tiles.y * camera_variables.tile_size))
+
+    # Dibujar cada tile en la superficie del tilemap
     grass = Resources.textures["grass"]
+    square = Resources.textures["square"]
     for x in range(camera_variables.tiles.x):
         for y in range(camera_variables.tiles.y):
             rect = pygame.Rect(x * camera_variables.tile_size, y * camera_variables.tile_size, camera_variables.tile_size, camera_variables.tile_size)
-            camera_variables.surface.blit(grass, rect)
+            tilemap.blit(grass, rect)
             if camera_variables.draw_grid:
-                pygame.draw.rect(camera_variables.surface, (0, 0, 0), rect, 1)
+                tilemap.blit(square, rect)
+
+    # Devolver la superficie del tilemap
+    return tilemap
 
 def _draw_ui():
     fps_text = camera_variables.font.render(f"FPS: {camera_variables.fps}", True, (255, 255, 255))

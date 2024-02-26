@@ -2,7 +2,7 @@ import pygame
 import src.models.utils_models as UtilsModels
 from pygame.font import Font
 
-tiles = UtilsModels.Point(31, 19)
+tiles = UtilsModels.Point(25, 25)
 position = UtilsModels.Point(0, 0)
 font: Font = None
 clock = pygame.time.Clock()

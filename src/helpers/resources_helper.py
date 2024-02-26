@@ -9,3 +9,8 @@ class Resources:
         grass = pygame.image.load("src/assets/terrain/grass.png").convert()
         grass = pygame.transform.scale(grass, (camera_variables.tile_size, camera_variables.tile_size))
         Resources.textures["grass"] = grass
+        
+        square = pygame.image.load("src/assets/square.png").convert_alpha()
+        # square = square.convert_alpha()
+        square = pygame.transform.scale(square, (camera_variables.tile_size, camera_variables.tile_size))
+        Resources.textures["square"] = square
