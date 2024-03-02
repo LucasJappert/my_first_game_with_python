@@ -3,13 +3,15 @@ from src.helpers.resources_helper import RESOURCES, get_sacaled_image, Resources
 from src.helpers.my_logger_helper import MyLogger
 from src.models.fps import FPS
 from src.utils.camera_variables import CAMERA_VARIABLES
+from src.utils.map_variables import MAP
 from src.models.my_sprite import MyTransparentSprite
 
 class Camera:
     tilemap = None
 
-    def __init__(self):
+    def initialize(self):
         CAMERA_VARIABLES.initialize()
+        RESOURCES.load_textures()
         
     def update(self):
         FPS.set_fps()
@@ -18,12 +20,18 @@ class Camera:
         CAMERA_VARIABLES.surface.fill((0, 0, 0))
         _draw_terrain()
 
+        enemy_group = pygame.sprite.Group()
+        for enemy in MAP.enemies:
+            enemy.draw(enemy_group)
+        enemy_group.draw(CAMERA_VARIABLES.surface)
+
         _draw_ui()
 
         _scale_and_blit()
 
         CAMERA_VARIABLES.clock.tick(60)
 
+CAMERA = Camera()
 
 def _scale_and_blit():
     # Get the size of the screen
@@ -41,8 +49,8 @@ def _scale_and_blit():
 
 def _draw_terrain():
     group = pygame.sprite.Group()
-    grass = get_sacaled_image(ResourcesNames.GRASS.value, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
-    square = get_sacaled_image(ResourcesNames.SQUARE.value, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
+    grass = get_sacaled_image(ResourcesNames.GRASS.name, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
+    square = get_sacaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
     for x in range(CAMERA_VARIABLES.tiles.x):
         for y in range(CAMERA_VARIABLES.tiles.y):
             my_grass_sprite = MyTransparentSprite(grass, x * CAMERA_VARIABLES.tile_size, y * CAMERA_VARIABLES.tile_size)
@@ -69,8 +77,8 @@ def create_tilemap():
     tilemap = pygame.Surface((CAMERA_VARIABLES.tiles.x * CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tiles.y * CAMERA_VARIABLES.tile_size))
 
     # Dibujar cada tile en la superficie del tilemap
-    grass = get_sacaled_image(ResourcesNames.GRASS.value, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
-    square = get_sacaled_image(ResourcesNames.SQUARE.value, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
+    grass = get_sacaled_image(ResourcesNames.GRASS.name, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
+    square = get_sacaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)
     for x in range(CAMERA_VARIABLES.tiles.x):
         for y in range(CAMERA_VARIABLES.tiles.y):
             rect = pygame.Rect(x * CAMERA_VARIABLES.tile_size, y * CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size)

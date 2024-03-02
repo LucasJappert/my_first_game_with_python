@@ -3,20 +3,18 @@ import pygame
 from src.utils.camera_variables import CAMERA_VARIABLES
 
 class ResourcesNames(Enum):
-    GRASS = "grass"
-    SQUARE = "square"
+    GRASS = "src/assets/terrain/grass.png"
+    SQUARE = "src/assets/square.png"
+    ENEMY = "src/assets/enemies/enemy.png"
 
 class Resources:
     textures: dict[str, pygame.Surface] = {}
 
     def load_textures(self):
-        grass = pygame.image.load("src/assets/terrain/grass.png").convert()
-        grass = pygame.transform.scale(grass, (CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size))
-        self.textures["grass"] = grass
-        
-        square = pygame.image.load("src/assets/square.png").convert_alpha()
-        square = pygame.transform.scale(square, (CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size))
-        self.textures["square"] = square
+        for texture_name in ResourcesNames:
+            texture = pygame.image.load(texture_name.value).convert_alpha()
+            texture = pygame.transform.scale(texture, (CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size))
+            self.textures[texture_name.name] = texture
 
 RESOURCES = Resources()
 
