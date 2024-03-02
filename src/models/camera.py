@@ -3,7 +3,7 @@ from src.helpers.resources_helper import RESOURCES, get_sacaled_image, Resources
 from src.helpers.my_logger_helper import MyLogger
 from src.models.fps import FPS
 from src.utils.camera_variables import CAMERA_VARIABLES
-from src.utils.map_variables import MAP
+from src.models.map_model import MAP
 from src.models.my_sprite import MyTransparentSprite
 
 class Camera:
@@ -15,6 +15,8 @@ class Camera:
         
     def update(self):
         FPS.set_fps()
+        for enemy in MAP.enemies:
+            enemy.update()
 
     def draw(self):
         CAMERA_VARIABLES.surface.fill((0, 0, 0))
@@ -55,9 +57,9 @@ def _draw_terrain():
         for y in range(CAMERA_VARIABLES.tiles.y):
             my_grass_sprite = MyTransparentSprite(grass, x * CAMERA_VARIABLES.tile_size, y * CAMERA_VARIABLES.tile_size)
             group.add(my_grass_sprite)
-            if CAMERA_VARIABLES.draw_grid:
-                my_square_sprite = MyTransparentSprite(square, x * CAMERA_VARIABLES.tile_size, y * CAMERA_VARIABLES.tile_size)
-                group.add(my_square_sprite)
+            # if CAMERA_VARIABLES.draw_grid:
+            #     my_square_sprite = MyTransparentSprite(square, x * CAMERA_VARIABLES.tile_size, y * CAMERA_VARIABLES.tile_size)
+            #     group.add(my_square_sprite)
 
     group.draw(CAMERA_VARIABLES.surface)
 

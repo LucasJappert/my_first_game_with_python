@@ -18,14 +18,15 @@ class Resources:
 
 RESOURCES = Resources()
 
-_cache: dict[str, pygame.Surface] = {}
+_get_sacaled_image_cache: dict[str, pygame.Surface] = {}
 def get_sacaled_image(texture_name: str, width: int, height: int):
+    """Implements an internal cache to avoid recalculating the same scaled image."""
     key = f"{texture_name}_{width}_{height}"
-    if key in _cache:
-        return _cache[key]
+    if key in _get_sacaled_image_cache:
+        return _get_sacaled_image_cache[key]
     
     texture = RESOURCES.textures[texture_name]
     scaled_image = pygame.transform.scale(texture, (width, height))
-    _cache[key] = scaled_image
+    _get_sacaled_image_cache[key] = scaled_image
 
     return scaled_image

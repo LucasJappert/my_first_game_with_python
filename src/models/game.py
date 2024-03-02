@@ -3,7 +3,7 @@ from src.models.camera import CAMERA
 from src.helpers.resources_helper import RESOURCES
 from src.utils.camera_variables import CAMERA_VARIABLES
 from src.helpers.my_logger_helper import MyLogger
-from src.utils.map_variables import MAP
+from src.models.map_model import MAP
 
 
 class Game:
