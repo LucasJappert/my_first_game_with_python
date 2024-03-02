@@ -1,7 +1,7 @@
 import pygame
 from src.models.camera import Camera
-from src.helpers.resources_helper import Resources
-import src.utils.camera_variables as camera_variables
+from src.helpers.resources_helper import RESOURCES
+from src.utils.camera_variables import CAMERA_VARIABLES
 from src.helpers.my_logger_helper import MyLogger
 
 
@@ -23,7 +23,7 @@ class Game:
         self.running = True
         self.camera = Camera()
 
-        Resources.load_textures()
+        RESOURCES.load_textures()
 
         clock = pygame.time.Clock()
         while self.running:

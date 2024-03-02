@@ -1,5 +1,6 @@
 1) Primeras configuraciones para dibujar la pantalla principal
-2) Primer objetivo funcional: crear mapa de 100x100 dibujando solamente una porcion de 20x20 la cual pueda moverse con las flechas del teclado
+2) Primer objetivo funcional: crear mapa de 25x25
+* Crear la clase Enemigo, que permita mover aleatoriamente el mismo y dibujarlo, luego crear 20 aleatorios en el mapa
 3) Segundo objetivo funcional: crear un personaje que se mueva con las flechas del teclado en el centro de la pantalla
 4) Tercer objetivo funcional: crear un personaje que se mueva con las flechas del teclado en el centro de la pantalla y que el mapa se mueva en sentido contrario a la direccion del personaje
 5) Cuarto objetivo funcional: agregar enemigos aleatorios que se muevan en el mapa
