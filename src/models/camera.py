@@ -19,7 +19,7 @@ class Camera:
         camera_variables.surface = pygame.Surface((camera_variables.tiles.x * camera_variables.tile_size, camera_variables.tiles.y * camera_variables.tile_size))
         MyLogger.green(Configurations.my_screen_size)
         screen_size_80 = (math.trunc(Configurations.my_screen_size.x * 0.6), math.trunc(Configurations.my_screen_size.y * 0.6))
-        pygame.display.set_mode(screen_size_80, pygame.RESIZABLE)   
+        pygame.display.set_mode(screen_size_80, pygame.DOUBLEBUF)   
         
     def update(self):
         FPS.set_fps()
@@ -48,19 +48,25 @@ def _scale_and_blit():
 
 
 def _draw_terrain():
-    # grass = Resources.textures["grass"]
-    # square = Resources.textures["square"]
-    # for x in range(camera_variables.tiles.x):
-    #     for y in range(camera_variables.tiles.y):
-    #         rect = pygame.Rect(x * camera_variables.tile_size, y * camera_variables.tile_size, camera_variables.tile_size, camera_variables.tile_size)
-    #         camera_variables.surface.blit(grass, rect)
-    #         if camera_variables.draw_grid:
-    #             camera_variables.surface.blit(square, rect)
+    grass = Resources.textures["grass"]
+    square = Resources.textures["square"]
+    for x in range(camera_variables.tiles.x):
+        for y in range(camera_variables.tiles.y):
+            rect = pygame.Rect(x * camera_variables.tile_size, y * camera_variables.tile_size, camera_variables.tile_size, camera_variables.tile_size)
+            camera_variables.surface.blit(grass, rect)
+            # if camera_variables.draw_grid:
+            #     camera_variables.surface.blit(square, rect)
+
+    for x in range(camera_variables.tiles.x):
+        x_axis = camera_variables.font.render(f"{x}", True, (255, 255, 255))
+        camera_variables.surface.blit(x_axis, ((x+1) * camera_variables.tile_size - 20, 10))
+
+
 
     # Dibujar el tilemap en la superficie de la cámara
-    if Camera.tilemap is None:
-        Camera.tilemap = create_tilemap()
-    camera_variables.surface.blit(Camera.tilemap, (0, 0))
+    # if Camera.tilemap is None:
+    # Camera.tilemap = create_tilemap()
+    # camera_variables.surface.blit(Camera.tilemap, (0, 0))
 
 def create_tilemap():
     # Crear una nueva superficie para el tilemap
