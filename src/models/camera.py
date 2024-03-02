@@ -63,9 +63,9 @@ def _draw_terrain():
 
     group.draw(CAMERA_VARIABLES.surface)
 
-    for x in range(CAMERA_VARIABLES.tiles.x):
-        x_axis = CAMERA_VARIABLES.font.render(f"{x}", True, (0, 0, 0))
-        CAMERA_VARIABLES.surface.blit(x_axis, ((x+1) * CAMERA_VARIABLES.tile_size - 20, 10))
+    # for x in range(CAMERA_VARIABLES.tiles.x):
+    #     x_axis = CAMERA_VARIABLES.font.render(f"{x}", True, (0, 0, 0))
+    #     CAMERA_VARIABLES.surface.blit(x_axis, ((x+1) * CAMERA_VARIABLES.tile_size - 20, 10))
 
 
 
