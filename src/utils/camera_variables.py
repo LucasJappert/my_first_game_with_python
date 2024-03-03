@@ -16,7 +16,7 @@ class CameraVariables:
     position = UtilsModels.Point(0, 0)
     font: Font = None
     clock = pygame.time.Clock()
-    draw_grid = True
+    draw_grid = False
     surface: pygame.Surface = None
     fps = 0
     
