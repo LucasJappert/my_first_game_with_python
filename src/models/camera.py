@@ -1,5 +1,5 @@
 import pygame
-from src.helpers.resources_helper import RESOURCES, get_sacaled_image, ResourcesNames
+from src.helpers.resources_helper import RESOURCES, get_scaled_image, ResourcesNames
 from src.helpers.my_logger_helper import MyLogger
 from src.models.fps import FPS
 from src.utils.camera_variables import CAMERA_VARIABLES
@@ -28,7 +28,7 @@ class Camera:
         _draw_terrain()
 
         map_objects_group = pygame.sprite.Group()
-        # _draw_mouse_square(map_objects_group)
+        _draw_mouse_square(map_objects_group)
 
         for obj in _get_ordered_map_objects():
             obj.draw(map_objects_group)
@@ -87,8 +87,8 @@ def _create_tilemap():
     tilemap = pygame.Surface((CAMERA_VARIABLES.tiles.x * CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tiles.y * CAMERA_VARIABLES.tile_size.y))
 
     # Dibujar cada tile en la superficie del tilemap
-    grass = get_sacaled_image(ResourcesNames.GRASS.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
-    square = get_sacaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
+    grass = get_scaled_image(ResourcesNames.GRASS.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
+    square = get_scaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
     for x in range(CAMERA_VARIABLES.tiles.x):
         for y in range(CAMERA_VARIABLES.tiles.y):
             rect = pygame.Rect(x * CAMERA_VARIABLES.tile_size.x, y * CAMERA_VARIABLES.tile_size.y, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
@@ -109,7 +109,7 @@ def _draw_mouse_square(map_objects_group: pygame.sprite.Group):
         fixed_mouse_position = get_fixed_mouse_position()
         topleft_x = int(fixed_mouse_position.x - CAMERA_VARIABLES.tile_size.x / 2)
         topleft_y = int(fixed_mouse_position.y - CAMERA_VARIABLES.tile_size.y / 2)
-        square = MyTransparentSprite(get_sacaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y), topleft_x, topleft_y)
+        square = MyTransparentSprite(get_scaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y), topleft_x, topleft_y)
         map_objects_group.add(square)
         # square_text = CAMERA_VARIABLES.font.render(f"x: {fixed_mouse_position.x}, y: {fixed_mouse_position.y}", True, (255, 255, 255))
         # CAMERA_VARIABLES.surface.blit(square_text, (200, 200))
