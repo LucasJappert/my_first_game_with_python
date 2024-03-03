@@ -1,44 +1,53 @@
-import math
 import pygame
-import src.models.utils_models as UtilsModels
-from src.utils.configurations import Configurations
-from src.helpers.resources_helper import Resources
-from pygame.font import Font
+from src.helpers.resources_helper import RESOURCES, get_sacaled_image, ResourcesNames
 from src.helpers.my_logger_helper import MyLogger
 from src.models.fps import FPS
-import src.utils.camera_variables as camera_variables
+from src.utils.camera_variables import CAMERA_VARIABLES
+from src.models.map_model import MAP
+from src.models.my_sprite import MyTransparentSprite
+from src.utils.map_utils import get_fixed_mouse_position
+from src.models.map_object_model import MapObject
 
 class Camera:
-    tilemap = None
 
-    def __init__(self):
-        camera_variables.position.x = 0
-        camera_variables.position.y = 0
-        camera_variables.font = pygame.font.SysFont(None, 48)
-        camera_variables.tile_size = 128 # math.trunc(Configurations.my_screen_size.x / CameraVariables.tiles.x)
-        camera_variables.surface = pygame.Surface((camera_variables.tiles.x * camera_variables.tile_size, camera_variables.tiles.y * camera_variables.tile_size))
-        MyLogger.green(Configurations.my_screen_size)
-        screen_size_80 = (math.trunc(Configurations.my_screen_size.x * 0.6), math.trunc(Configurations.my_screen_size.y * 0.6))
-        pygame.display.set_mode(screen_size_80, pygame.RESIZABLE)   
+    def initialize(self):
+        CAMERA_VARIABLES.initialize()
+        RESOURCES.load_textures()
         
     def update(self):
         FPS.set_fps()
 
+        for enemy in MAP.enemies:
+            enemy.update()
+
+        MAP.my_player.update()
+
     def draw(self):
-        camera_variables.surface.fill((0, 0, 0))
+        CAMERA_VARIABLES.surface.fill((0, 0, 0))
         _draw_terrain()
+
+        map_objects_group = pygame.sprite.Group()
+        # _draw_mouse_square(map_objects_group)
+
+        for obj in _get_ordered_map_objects():
+            obj.draw(map_objects_group)
+
+        map_objects_group.draw(CAMERA_VARIABLES.surface)
 
         _draw_ui()
 
         _scale_and_blit()
 
+        CAMERA_VARIABLES.clock.tick(60)
+
+CAMERA = Camera()
 
 def _scale_and_blit():
     # Get the size of the screen
     screen_size = pygame.display.get_surface().get_size()
 
     # Scale the surface to the size of the screen
-    scaled_surface = pygame.transform.scale(camera_variables.surface, screen_size)
+    scaled_surface = pygame.transform.scale(CAMERA_VARIABLES.surface, screen_size)
 
     # Draw the scaled surface to the screen
     pygame.display.get_surface().blit(scaled_surface, (0, 0))
@@ -46,41 +55,45 @@ def _scale_and_blit():
     # Update the display
     pygame.display.flip()
 
-
 def _draw_terrain():
-    # grass = Resources.textures["grass"]
-    # square = Resources.textures["square"]
-    # for x in range(camera_variables.tiles.x):
-    #     for y in range(camera_variables.tiles.y):
-    #         rect = pygame.Rect(x * camera_variables.tile_size, y * camera_variables.tile_size, camera_variables.tile_size, camera_variables.tile_size)
-    #         camera_variables.surface.blit(grass, rect)
-    #         if camera_variables.draw_grid:
-    #             camera_variables.surface.blit(square, rect)
+    group = pygame.sprite.Group()
+    grass = get_sacaled_image(ResourcesNames.GRASS.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
+    square = get_sacaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y)
+    for x in range(CAMERA_VARIABLES.tiles.x):
+        for y in range(CAMERA_VARIABLES.tiles.y):
+            my_grass_sprite = MyTransparentSprite(grass, x * CAMERA_VARIABLES.tile_size.x, y * CAMERA_VARIABLES.tile_size.y)
+            group.add(my_grass_sprite)
+            if CAMERA_VARIABLES.draw_grid:
+                my_square_sprite = MyTransparentSprite(square, x * CAMERA_VARIABLES.tile_size.x, y * CAMERA_VARIABLES.tile_size.y)
+                group.add(my_square_sprite)
 
-    # Dibujar el tilemap en la superficie de la cámara
-    if Camera.tilemap is None:
-        Camera.tilemap = create_tilemap()
-    camera_variables.surface.blit(Camera.tilemap, (0, 0))
+    group.draw(CAMERA_VARIABLES.surface)
 
-def create_tilemap():
-    # Crear una nueva superficie para el tilemap
-    tilemap = pygame.Surface((camera_variables.tiles.x * camera_variables.tile_size, camera_variables.tiles.y * camera_variables.tile_size))
-
-    # Dibujar cada tile en la superficie del tilemap
-    grass = Resources.textures["grass"]
-    square = Resources.textures["square"]
-    for x in range(camera_variables.tiles.x):
-        for y in range(camera_variables.tiles.y):
-            rect = pygame.Rect(x * camera_variables.tile_size, y * camera_variables.tile_size, camera_variables.tile_size, camera_variables.tile_size)
-            tilemap.blit(grass, rect)
-            if camera_variables.draw_grid:
-                tilemap.blit(square, rect)
-
-    # Devolver la superficie del tilemap
-    return tilemap
+    if CAMERA_VARIABLES.draw_grid:
+        for x in range(CAMERA_VARIABLES.tiles.x):
+            x_axis = CAMERA_VARIABLES.font.render(f"{x+1}", True, (0, 0, 0))
+            CAMERA_VARIABLES.surface.blit(x_axis, ((x+1) * CAMERA_VARIABLES.tile_size.x - 60, 10))
 
 def _draw_ui():
-    fps_text = camera_variables.font.render(f"FPS: {camera_variables.fps}", True, (255, 255, 255))
-    camera_variables.surface.blit(fps_text, (10, 10))
+    fps_text = CAMERA_VARIABLES.font.render(f"FPS: {CAMERA_VARIABLES.fps}", True, (255, 255, 255))
+    CAMERA_VARIABLES.surface.blit(fps_text, (10, CAMERA_VARIABLES.tile_size.y * CAMERA_VARIABLES.tiles.y - 50))
 
+def _draw_mouse_square(map_objects_group: pygame.sprite.Group):
+        fixed_mouse_position = get_fixed_mouse_position()
+        topleft_x = int(fixed_mouse_position.x - CAMERA_VARIABLES.tile_size.x / 2)
+        topleft_y = int(fixed_mouse_position.y - CAMERA_VARIABLES.tile_size.y / 2)
+        square = MyTransparentSprite(get_sacaled_image(ResourcesNames.SQUARE.name, CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y), topleft_x, topleft_y)
+        map_objects_group.add(square)
+        square_text = CAMERA_VARIABLES.font.render(f"x: {fixed_mouse_position.x}, y: {fixed_mouse_position.y}", True, (255, 255, 255))
+        CAMERA_VARIABLES.surface.blit(square_text, (200, 200))
+
+def _get_ordered_map_objects():
+    objects: list[MapObject] = []
+    for enemy in MAP.enemies:
+        objects.append(enemy)
+    objects.append(MAP.my_player)
+
+    ordered_list = sorted(objects, key=lambda obj: (obj.get_center_y(), obj.get_center_x()))
+
+    return ordered_list
 

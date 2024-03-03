@@ -1,37 +1,35 @@
 import pygame
-from src.models.camera import Camera
-from src.helpers.resources_helper import Resources
-import src.utils.camera_variables as camera_variables
+from src.models.camera import CAMERA
+from src.helpers.resources_helper import RESOURCES
+from src.utils.camera_variables import CAMERA_VARIABLES
 from src.helpers.my_logger_helper import MyLogger
+from src.models.map_model import MAP
 
 
 class Game:
     textures: dict = {}
     running = False
-    camera: Camera = None
     
     def initialize(self):
         pygame.init()
 
         pygame.display.set_caption("My game")
 
+        CAMERA.initialize()
+        MAP.initialize()
+
+        self.running = True
+
     def end(self):
         self.running = False
 
     def start(self):
         self.initialize()
-        self.running = True
-        self.camera = Camera()
 
-        Resources.load_textures()
-
-        clock = pygame.time.Clock()
         while self.running:
-            clock.tick(60)
-                
-            self.camera.update()
+            CAMERA.update()
 
-            self.camera.draw()
+            CAMERA.draw()
             
             handle_keyboard_events(self)
         
@@ -43,3 +41,4 @@ def handle_keyboard_events(my_game: Game):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 my_game.end()
+        MAP.my_player.handle_events(event)
