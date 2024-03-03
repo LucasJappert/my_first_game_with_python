@@ -6,7 +6,7 @@ import tkinter
 
 root = tkinter.Tk()
 screen_size_aux: UtilsModels.Point = UtilsModels.Point(1920, 1080)
-tiles = UtilsModels.Point(15, 9)
+tiles = UtilsModels.Point(17, 9)
 # tile_size: int = 128
 
 class CameraVariables:
@@ -21,6 +21,7 @@ class CameraVariables:
     fps = 0
     
     def initialize(self):
+        print(f"tile_size: {self.tile_size.x}x{self.tile_size.y}")
         self.screen_size =  UtilsModels.Point(tiles.x * self.tile_size.x, tiles.y * self.tile_size.y)
         self.position.x = 0
         self.position.y = 0
@@ -29,7 +30,7 @@ class CameraVariables:
         
         my_full_screen_size = UtilsModels.Point(root.winfo_screenwidth(), root.winfo_screenheight())
         game_screen_size = (math.trunc(my_full_screen_size.x * 0.8), math.trunc(my_full_screen_size.y * 0.8))
-        pygame.display.set_mode(game_screen_size, pygame.DOUBLEBUF)
+        pygame.display.set_mode(game_screen_size, pygame.RESIZABLE)
 
     
 CAMERA_VARIABLES = CameraVariables()

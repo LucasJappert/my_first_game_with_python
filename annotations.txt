@@ -3,6 +3,10 @@
 * Crear la clase Enemy, que permita mover aleatoriamente el mismo y dibujarlo, luego crear 20 aleatorios en el mapa
 * Crear la clase MyPlayer, que permita moverse con el click derecho del mouse y dibujarlo
 * Draw enemies and my player ordered by x and y position
+* Implements tilemap for terrain to improve performance
+* Implements spritesheet for enemies
+* Implements spritesheet for my player
+* Implements collisions between objects
 3) Segundo objetivo funcional: crear un personaje que se mueva con las flechas del teclado en el centro de la pantalla
 4) Tercer objetivo funcional: crear un personaje que se mueva con las flechas del teclado en el centro de la pantalla y que el mapa se mueva en sentido contrario a la direccion del personaje
 5) Cuarto objetivo funcional: agregar enemigos aleatorios que se muevan en el mapa

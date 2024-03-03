@@ -13,7 +13,7 @@ class Map():
         pass
     
     def initialize(self):
-        for i in range(Configurations.enemies_number):
+        for i in range(Enemy.initial_enemies):
             random_tile = map_utils.get_randome_tile()
             random_x = random_tile.x * CAMERA_VARIABLES.tile_size.x + int(CAMERA_VARIABLES.tile_size.y / 2)
             random_y = random_tile.y * CAMERA_VARIABLES.tile_size.x + int(CAMERA_VARIABLES.tile_size.y / 2)
