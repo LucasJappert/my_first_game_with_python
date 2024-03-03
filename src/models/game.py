@@ -41,3 +41,4 @@ def handle_keyboard_events(my_game: Game):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 my_game.end()
+        MAP.my_player.handle_events(event)

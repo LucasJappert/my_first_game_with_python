@@ -1,7 +1,7 @@
 
 
 class Configurations:
-    grid_size = [100, 100]
+    enemies_number = 100
 
     def __init__(self):
         pass

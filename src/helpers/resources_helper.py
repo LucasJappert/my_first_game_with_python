@@ -6,6 +6,7 @@ class ResourcesNames(Enum):
     GRASS = "src/assets/terrain/grass.png"
     SQUARE = "src/assets/square.png"
     ENEMY = "src/assets/enemies/enemy.png"
+    PLAYER = "src/assets/players/my-player.png"
 
 class Resources:
     textures: dict[str, pygame.Surface] = {}
@@ -13,7 +14,7 @@ class Resources:
     def load_textures(self):
         for texture_name in ResourcesNames:
             texture = pygame.image.load(texture_name.value).convert_alpha()
-            texture = pygame.transform.scale(texture, (CAMERA_VARIABLES.tile_size, CAMERA_VARIABLES.tile_size))
+            texture = pygame.transform.scale(texture, (CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y))
             self.textures[texture_name.name] = texture
 
 RESOURCES = Resources()
