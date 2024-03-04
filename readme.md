@@ -15,21 +15,21 @@
 6. **Install Library**:
     1. Inside the repository, there is a file with all the libraries to install (requirements.txt). Run `pip install -r requirements.txt` in the terminal to install all the libraries. This ensures everyone has the same versions of the library.
 
-## ➡️ Add New Python Library
-
+## ◾Add New Python Library
 In the terminal, you can install libraries using pip. Example: `pip install python-multipart`. When installing a library, remember to update the "requirements.txt" file by running `pip freeze > requirements.txt` in the terminal.
 
-## ➡️ pylint
-
+## ◾pylint
 To run linting rules with pylint, the virtual environment must be running, and navigate to the 'src' folder. From here, you can run pylint on the entire 'src' folder with `pylint *` or on specific folders/files as needed, for example, `pylint services/*` or `pylint services/maizplus.py`.
 
-**📝Tasks list**
+
+
+**📝TASKS LIST**
 ---
 
 ### DOING
 - 🔵Update spritesheet of enemies and players from Nova
 
-### TODO
+### TO DO
 - 🟡 Add some decoration on the ground
 - 🟡 Invest path finder algorithms and implements in MapObject class
 - 🟡 Implements collisions between objects
