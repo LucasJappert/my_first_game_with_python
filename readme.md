@@ -1,4 +1,4 @@
-## 📌📌📌 Install Python and Dependencies on Localhost
+## 💾 Install Python and Dependencies on Localhost
 
 1. **Clone Repository Git**
 2. **Install Python**: Download from [https://www.python.org/downloads/](https://www.python.org/downloads/). Be sure to select the option to add Python to the PATH during installation.
@@ -23,28 +23,27 @@ In the terminal, you can install libraries using pip. Example: `pip install pyth
 
 To run linting rules with pylint, the virtual environment must be running, and navigate to the 'src' folder. From here, you can run pylint on the entire 'src' folder with `pylint *` or on specific folders/files as needed, for example, `pylint services/*` or `pylint services/maizplus.py`.
 
-**🎯 Tasks list 🎯**
+**📝Tasks list**
 ---
 
 ### DOING
-- ⬜ Escribir ejemplos de uso del proyecto
+- 🔵Update spritesheet of enemies and players from Nova
 
 ### TODO
-- ⬜ Update spritesheet of enemies and players from Nova
-- ⬜ Add some decoration on the ground
-- ⬜ Invest path finder algorithms and implements in MapObject class
-- ⬜ Implements collisions between objects
-- ⬜ Create LICENSE.md file with MIT license
-- ⬜ Create CONTRIBUTING.md file with instructions for contributing
+- 🟡 Add some decoration on the ground
+- 🟡 Invest path finder algorithms and implements in MapObject class
+- 🟡 Implements collisions between objects
+- 🟡 Create LICENSE.md file with MIT license
+- 🟡 Create CONTRIBUTING.md file with instructions for contributing
 
 ### DONE
-- ✅ Implements spritesheet for players
-- ✅ Implements spritesheet for enemies
-- ✅ Implements tilemap for terrain to improve performance
-- ✅ Draw enemies and my player ordered by x and y position
-- ✅ Create MyPlayer class, it moves with mouse click and draws itself
-- ✅ Create Enemy class, that moves and draws itself
-- ✅ First functional goal: Create a window with pygame
-- ✅ First configurations for the project
+- 🟢 Implements spritesheet for players
+- 🟢 Implements spritesheet for enemies
+- 🟢 Implements tilemap for terrain to improve performance
+- 🟢 Draw enemies and my player ordered by x and y position
+- 🟢 Create MyPlayer class, it moves with mouse click and draws itself
+- 🟢 Create Enemy class, that moves and draws itself
+- 🟢 First functional goal: Create a window with pygame
+- 🟢 First configurations for the project
 
 
