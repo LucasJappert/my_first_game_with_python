@@ -34,7 +34,7 @@ class Game:
             handle_keyboard_events(self)
         
         pygame.quit()
-        MyLogger.green("GAME ENDED!")
+        MyLogger.green("###################### GAME ENDED! ######################")
 
 def handle_keyboard_events(my_game: Game):
     for event in pygame.event.get():

@@ -1,4 +1,4 @@
-## Install Python and Dependencies on Localhost
+## 💾 Install Python and Dependencies on Localhost
 
 1. **Clone Repository Git**
 2. **Install Python**: Download from [https://www.python.org/downloads/](https://www.python.org/downloads/). Be sure to select the option to add Python to the PATH during installation.
@@ -15,10 +15,35 @@
 6. **Install Library**:
     1. Inside the repository, there is a file with all the libraries to install (requirements.txt). Run `pip install -r requirements.txt` in the terminal to install all the libraries. This ensures everyone has the same versions of the library.
 
-## Add New Python Library
-
+## ◾Add New Python Library
 In the terminal, you can install libraries using pip. Example: `pip install python-multipart`. When installing a library, remember to update the "requirements.txt" file by running `pip freeze > requirements.txt` in the terminal.
 
-## PYLINT
-
+## ◾pylint
 To run linting rules with pylint, the virtual environment must be running, and navigate to the 'src' folder. From here, you can run pylint on the entire 'src' folder with `pylint *` or on specific folders/files as needed, for example, `pylint services/*` or `pylint services/maizplus.py`.
+
+
+
+**📝TASKS LIST**
+---
+
+### DOING
+- 🔵Update spritesheet of enemies and players from Nova
+
+### TO DO
+- 🟡 Add some decoration on the ground
+- 🟡 Invest path finder algorithms and implements in MapObject class
+- 🟡 Implements collisions between objects
+- 🟡 Create LICENSE.md file with MIT license
+- 🟡 Create CONTRIBUTING.md file with instructions for contributing
+
+### DONE
+- 🟢 Implements spritesheet for players
+- 🟢 Implements spritesheet for enemies
+- 🟢 Implements tilemap for terrain to improve performance
+- 🟢 Draw enemies and my player ordered by x and y position
+- 🟢 Create MyPlayer class, it moves with mouse click and draws itself
+- 🟢 Create Enemy class, that moves and draws itself
+- 🟢 First functional goal: Create a window with pygame
+- 🟢 First configurations for the project
+
+

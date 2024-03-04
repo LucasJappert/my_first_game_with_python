@@ -4,8 +4,7 @@ from src.models.map_object_model import MapObject
 from src.models.general_enums import MapObjectType
 from src.utils.map_utils import get_fixed_mouse_position
 
-class MyPlayer(MapObject):
-    _target_position: Point = None
+class Player(MapObject):
 
     def __init__(self, center_position: Point, name: str):
         super().__init__(center_position, name, MapObjectType.PLAYER)
