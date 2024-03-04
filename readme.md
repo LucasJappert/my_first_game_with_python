@@ -23,26 +23,28 @@ In the terminal, you can install libraries using pip. Example: `pip install pyth
 
 To run linting rules with pylint, the virtual environment must be running, and navigate to the 'src' folder. From here, you can run pylint on the entire 'src' folder with `pylint *` or on specific folders/files as needed, for example, `pylint services/*` or `pylint services/maizplus.py`.
 
-## <h2 style="color: #007bff;">Tareas por hacer</h2>
+** 🎯 Tasks list 🎯 **
+---
 
 ### DOING
-- [ ] Escribir ejemplos de uso del proyecto
+- ⬜ Escribir ejemplos de uso del proyecto
 
 ### TODO
-- [ ] Update spritesheet of enemies and players from Nova
-- [ ] Add some decoration on the ground
-- [ ] Invest path finder algorithms and implements in MapObject class
-- [ ] Implements collisions between objects
-- [ ] Create LICENSE.md file with MIT license
-- [ ] Create CONTRIBUTING.md file with instructions for contributing
+- ⬜ Update spritesheet of enemies and players from Nova
+- ⬜ Add some decoration on the ground
+- ⬜ Invest path finder algorithms and implements in MapObject class
+- ⬜ Implements collisions between objects
+- ⬜ Create LICENSE.md file with MIT license
+- ⬜ Create CONTRIBUTING.md file with instructions for contributing
 
 ### DONE
-- [x] Implements spritesheet for players
-- [x] Implements spritesheet for enemies
-- [x] Implements tilemap for terrain to improve performance
-- [x] Draw enemies and my player ordered by x and y position
-- [x] Create MyPlayer class, it moves with mouse click and draws itself
-- [x] Create Enemy class, that moves and draws itself
-- [x] First functional goal: Create a window with pygame
-- [x] First configurations for the project
+- ✅ Implements spritesheet for players
+- ✅ Implements spritesheet for enemies
+- ✅ Implements tilemap for terrain to improve performance
+- ✅ Draw enemies and my player ordered by x and y position
+- ✅ Create MyPlayer class, it moves with mouse click and draws itself
+- ✅ Create Enemy class, that moves and draws itself
+- ✅ First functional goal: Create a window with pygame
+- ✅ First configurations for the project
+
 
