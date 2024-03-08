@@ -19,10 +19,12 @@ class CameraVariables:
     draw_grid = False
     surface: pygame.Surface = None
     fps = 0
+    grid_map_busy_state: list[list[bool]] = []
     
     def initialize(self):
         print(f"tile_size: {self.tile_size.x}x{self.tile_size.y}")
         self.screen_size =  UtilsModels.Point(tiles.x * self.tile_size.x, tiles.y * self.tile_size.y)
+        self.grid_map_busy_state = [[False for x in range(self.screen_size.x)] for y in range(self.screen_size.y)]
         self.position.x = 0
         self.position.y = 0
         self.font = pygame.font.SysFont(None, 48)

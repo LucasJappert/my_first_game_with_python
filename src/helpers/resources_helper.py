@@ -5,8 +5,26 @@ from src.utils.camera_variables import CAMERA_VARIABLES
 class ResourcesNames(Enum):
     GRASS = "src/assets/terrain/grass.png"
     SQUARE = "src/assets/square.png"
-    ENEMY = "src/assets/enemies/enemy.png"
     PLAYER = "src/assets/players/my-player.png"
+    
+class Enemy():
+    path: str
+    name: str
+    def __init__(self, path: str, name: str):
+        self.path = path
+        self.name = name
+    
+class EnemyList(Enum):
+    BEE = Enemy("src/assets/enemies/spritesheets/bee.png", "bee")
+    LICH_LORD = Enemy("src/assets/enemies/spritesheets/lich-lord.png", "lich-lord")
+    SKELETON = Enemy("src/assets/enemies/spritesheets/skeleton.png", "skeleton")
+    SPIDER = Enemy("src/assets/enemies/spritesheets/spider.png", "spider")
+    MINI_SPIDER = Enemy("src/assets/enemies/spritesheets/mini-spider.png", "mini-spider")
+    TREE = Enemy("src/assets/enemies/spritesheets/tree.png", "tree")
+    GHOST = Enemy("src/assets/enemies/spritesheets/ghost.png", "ghost")
+    TURTLE = Enemy("src/assets/enemies/spritesheets/turtle.png", "turtle")
+    DINOSAUR = Enemy("src/assets/enemies/spritesheets/dinosaur.png", "dinosaur")
+    SPECTRUM = Enemy("src/assets/enemies/spritesheets/spectrum.png", "spectrum")
 
 
 DIRECTIONS = ["bottom", "left", "right", "top"]
@@ -52,6 +70,20 @@ class Resources:
                         texture = players_spritesheet.subsurface(pygame.Rect(x_into_spritesheet, y_into_spritesheet, frame_size, frame_size))
                         self.textures[f"player_{player_id}_{direction}_{frame+1}"] = texture
 
+        # Add sprites contained in the enemies spritesheets
+        frames_by_animation = 3
+        for enemy_name in EnemyList:
+            enemy_spritesheet = pygame.image.load(enemy_name.value.path).convert_alpha()
+            frame_size_x = enemy_spritesheet.get_width() // frames_by_animation
+            frame_size_y = enemy_spritesheet.get_height() // len(DIRECTIONS)
+            for direction_index, direction in enumerate(DIRECTIONS):
+                for frame in range(frames_by_animation):
+                    x_into_spritesheet = frame * frame_size_x
+                    y_into_spritesheet = direction_index * frame_size_y
+                    texture = enemy_spritesheet.subsurface(pygame.Rect(x_into_spritesheet, y_into_spritesheet, frame_size_x, frame_size_y))
+                    self.textures[f"{enemy_name.value.name}_{direction}_{frame+1}"] = texture
+            
+        
     def get_textures_by_enemy_id(self, enemy_id: int):
         result: dict[str, list[pygame.Surface]] = {}
 
@@ -72,14 +104,16 @@ class Resources:
 RESOURCES = Resources()
 
 _get_sacaled_image_cache: dict[str, pygame.Surface] = {}
-def get_scaled_image(texture_key: str, width: int, height: int):
+def get_scaled_image(texture_key: str, width: int | None = None, height: int | None = None):
     """Implements an internal cache to avoid recalculating the same scaled image."""
     key = f"{texture_key}_{width}_{height}"
     if key in _get_sacaled_image_cache:
         return _get_sacaled_image_cache[key]
     
-    texture = RESOURCES.textures[texture_key]
-    scaled_image = pygame.transform.scale(texture, (width, height))
+    scaled_image = RESOURCES.textures[texture_key]
+    if width and height:
+        scaled_image = pygame.transform.scale(scaled_image, (width, height))
+    
     _get_sacaled_image_cache[key] = scaled_image
 
     return scaled_image

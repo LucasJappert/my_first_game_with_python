@@ -12,8 +12,8 @@ def get_randome_tile():
 
 def get_center_tile():
     result: Point = Point(0, 0)
-    result.x = int(CAMERA_VARIABLES.tiles.x / 2)
-    result.y = int(CAMERA_VARIABLES.tiles.y / 2)
+    result.x = int(CAMERA_VARIABLES.tiles.x * CAMERA_VARIABLES.tile_size.x / 2)
+    result.y = int(CAMERA_VARIABLES.tiles.y * CAMERA_VARIABLES.tile_size.y / 2)
     return result
 
 def get_fixed_mouse_position():

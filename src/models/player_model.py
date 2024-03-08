@@ -8,7 +8,7 @@ class Player(MapObject):
 
     def __init__(self, center_position: Point, name: str):
         super().__init__(center_position, name, MapObjectType.PLAYER)
-        self.set_speed(4)
+        self._set_speed(4)
 
     #region GETTERs
     #endregion
@@ -23,4 +23,6 @@ class Player(MapObject):
 
     def on_right_click(self):
         fixed_mouse_position = get_fixed_mouse_position()
-        self.set_target_position(fixed_mouse_position)
+        self._set_target_position(fixed_mouse_position)
+        # result = self.find_shortest_path()
+        # print(result)
