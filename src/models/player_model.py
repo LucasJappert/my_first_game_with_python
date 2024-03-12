@@ -20,9 +20,13 @@ class Player(MapObject):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == pygame.BUTTON_LEFT:
                 self.on_right_click()
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pass
 
     def on_right_click(self):
         fixed_mouse_position = get_fixed_mouse_position()
-        self._set_target_position(fixed_mouse_position)
-        # result = self.find_shortest_path()
-        # print(result)
+        # self._set_target_position(fixed_mouse_position)
+        result = self.find_shortest_path(fixed_mouse_position)
+        print(result)

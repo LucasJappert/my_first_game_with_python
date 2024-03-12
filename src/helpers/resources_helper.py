@@ -1,8 +1,8 @@
 from enum import Enum
 import pygame
-from src.utils.camera_variables import CAMERA_VARIABLES
+from src.utils.map_variables import MAP_VARIABLES
 
-class ResourcesNames(Enum):
+class GeneralTextures(Enum):
     GRASS = "src/assets/terrain/grass.png"
     SQUARE = "src/assets/square.png"
     PLAYER = "src/assets/players/my-player.png"
@@ -33,9 +33,9 @@ class Resources:
     textures: dict[str, pygame.Surface] = {}
 
     def load_textures(self):
-        for texture_name in ResourcesNames:
+        for texture_name in GeneralTextures:
             texture = pygame.image.load(texture_name.value).convert_alpha()
-            texture = pygame.transform.scale(texture, (CAMERA_VARIABLES.tile_size.x, CAMERA_VARIABLES.tile_size.y))
+            texture = pygame.transform.scale(texture, (MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
             self.textures[texture_name.name] = texture
         
         # Add sprites contained in the enemies spritesheet

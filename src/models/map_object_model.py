@@ -2,10 +2,10 @@ from enum import Enum
 import math
 import pygame
 from src.models.general_enums import MapObjectType
-from src.helpers.resources_helper import get_scaled_image, ResourcesNames, DIRECTIONS
+from src.helpers.resources_helper import get_scaled_image, GeneralTextures, DIRECTIONS
 from src.models.utils_models import Point
 from src.models.my_sprite import MyTransparentSprite
-from src.utils.camera_variables import CAMERA_VARIABLES
+from src.utils.map_variables import MAP_VARIABLES
 import src.utils.map_utils as map_utils
 import math
 import heapq
@@ -22,7 +22,7 @@ class MapObject():
     _current_frame: int = 1
     _frame_counter = 0
     _frame_rate = 10
-    _scale_respect_to_tile: float = 1
+    _scale_respect_to_tile: float = 2
     _collide_circle_radius: int = 30
     
     def __init__(self, center_position: Point, name: str, object_type: MapObjectType):
@@ -34,9 +34,9 @@ class MapObject():
             self._set_texture()
 
         if object_type == MapObjectType.ENEMY:
-            self._scale_respect_to_tile = 0.7
+            self._scale_respect_to_tile = 1.5
             self._set_texture()
-            self._set_random_target()
+            # self._set_random_target()
 
     #region GETTERs
     def get_center_x(self):
@@ -71,16 +71,16 @@ class MapObject():
             self._sprite.set_top_left_for_map_object(self._my_position, self._collide_circle_radius)
     def _set_random_target(self):
         random_tile = map_utils.get_randome_tile()
-        random_x = random_tile.x * CAMERA_VARIABLES.tile_size.x + int(CAMERA_VARIABLES.tile_size.x / 2)
-        random_y = random_tile.y * CAMERA_VARIABLES.tile_size.y + int(CAMERA_VARIABLES.tile_size.y / 2)
+        random_x = random_tile.x * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.x / 2)
+        random_y = random_tile.y * MAP_VARIABLES.tile_size.y + int(MAP_VARIABLES.tile_size.y / 2)
         self._set_target_position(Point(random_x, random_y))
     def _set_speed(self, value: float):
         self._speed = value
     def _set_texture(self):
         texture_key = f"{self._name}_{self._direction}_{self._current_frame}"
-        texture = get_scaled_image(texture_key, int(CAMERA_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(CAMERA_VARIABLES.tile_size.y * self._scale_respect_to_tile))
+        texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
         # if self._object_type == MapObjectType.ENEMY: texture = get_scaled_image(texture_key)
-        # else: texture = get_scaled_image(texture_key, int(CAMERA_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(CAMERA_VARIABLES.tile_size.y * self._scale_respect_to_tile))
+        # else: texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
         self._sprite = MyTransparentSprite(texture)
         self._sprite.set_top_left_for_map_object(self._my_position, self._collide_circle_radius)
         
@@ -101,8 +101,6 @@ class MapObject():
 
     def draw(self, map_objects_group: pygame.sprite.Group):
         map_objects_group.add(self._sprite)
-        #draw the collide circle around the object
-        # pygame.draw.circle(CAMERA_VARIABLES.surface, (0, 0, 0), (self.get_center_x(), self.get_center_y()), self._collide_circle_radius)
         
 
     def get_tuple_to_use_in_blits(self):
@@ -135,69 +133,8 @@ class MapObject():
         if self._target_position is None and self._object_type == MapObjectType.ENEMY:
             self._set_random_target()
 
-    def find_shortest_path(self):
-        start = (self._my_position.x, self._my_position.y)
-        target = (self._target_position.x, self._target_position.y)
-        # Implementación básica del algoritmo A*
-
-        # Define la función heurística (distancia euclidiana)
-        def heuristic(node):
-            dx = node[0] - target[0]
-            dy = node[1] - target[1]
-            return math.sqrt(dx**2 + dy**2)
-
-        # Define los movimientos permitidos (arriba, abajo, izquierda, derecha y diagonales)
-        movements = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-
-        # Inicializa la lista abierta y la lista cerrada
-        open_list = []
-        closed_list = set()
-
-        # Inicializa el nodo de inicio y lo agrega a la lista abierta
-        heapq.heappush(open_list, (0, start))
-        
-        # Inicializa el diccionario came_from
-        came_from = {}
-        
-        while open_list:
-            # Extrae el nodo con el costo más bajo de la lista abierta
-            current_cost, current_node = heapq.heappop(open_list)
-
-            # Si el nodo actual es el nodo objetivo, reconstruye el camino y devuélvelo
-            if current_node == target:
-                path = []
-                while current_node != start:
-                    path.append(current_node)
-                    current_node = came_from[current_node]
-                path.append(start)
-                return list(reversed(path))
-
-            # Agrega el nodo actual a la lista cerrada
-            closed_list.add(current_node)
-
-            obstacles = CAMERA_VARIABLES.grid_map_busy_state
-            # Genera los sucesores del nodo actual
-            for move in movements:
-                next_node = (current_node[0] + move[0], current_node[1] + move[1])
-
-                # Si el sucesor está fuera del mapa, o es un obstáculo, o ya está en la lista cerrada, ignóralo
-                if next_node[0] < 0 or next_node[0] >= len(obstacles) or next_node[1] < 0 or next_node[1] >= len(obstacles[0]) or obstacles[next_node[0]][next_node[1]]:
-                    continue
-                
-                # Si el sucesor está bloqueado por un obstáculo, ignóralo
-                if self.is_collision_with_obstacle(next_node, obstacles):
-                    continue
-
-                # Calcula el nuevo costo desde el inicio hasta el sucesor
-                new_cost = current_cost + heuristic(next_node)
-
-                # Si el sucesor no está en la lista abierta o el nuevo costo es menor, actualiza su costo y agrega a la lista abierta
-                if next_node not in closed_list:
-                    heapq.heappush(open_list, (new_cost, next_node))
-                    came_from[next_node] = current_node
-
-        # Si no se pudo encontrar un camino, devuelve None
-        return None
+    def find_shortest_path(self, target_position: Point):
+        pass
     
     def is_collision_with_obstacle(self, next_position: tuple[int, int], obstacles: list[list[bool]]):
         # Calcula el área de colisión del personaje en la siguiente posición
@@ -215,4 +152,6 @@ class MapObject():
         distance = math.sqrt((circle1[0] - circle2[0])**2 + (circle1[1] - circle2[1])**2)
         return distance <= circle1[2] + circle2[2]
 
+    def get_path(self):
+        return self.find_shortest_path()
 

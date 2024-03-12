@@ -3,7 +3,7 @@ from src.models.map_object_model import MapObject
 from src.models.general_enums import MapObjectType
 
 class Enemy(MapObject):
-    initial_enemies = 50
+    initial_enemies = 5
     types = 24
 
     def __init__(self, center_position: Point, name: str):
