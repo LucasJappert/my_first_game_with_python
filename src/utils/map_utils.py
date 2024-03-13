@@ -6,8 +6,8 @@ from src.utils.map_variables import MAP_VARIABLES, TILES_GRID_COL_ROW
     
 def get_randome_tile():
     result: Point = Point(0, 0)
-    result.x = random.randint(0, TILES_GRID_COL_ROW.x -1)
-    result.y = random.randint(0, TILES_GRID_COL_ROW.y -1)
+    result.x = random.randint(1, TILES_GRID_COL_ROW.x)
+    result.y = random.randint(1, TILES_GRID_COL_ROW.y)
     return result
 
 def get_center_tile():

@@ -38,7 +38,8 @@ class Map():
             enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
             
             random_tile = map_utils.get_randome_tile()
-            random_x = random_tile.x * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.y / 2)
+            print(f"random_tile: x{random_tile.x}, y{random_tile.y}")
+            random_x = random_tile.x * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.x / 2)
             random_y = random_tile.y * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.y / 2)
             center_position = Point(random_x, random_y)
             self._enemies.append(Enemy(center_position, enemy_name))
