@@ -10,8 +10,7 @@ from src.models.my_sprite_model import MySprite
 from src.utils.map_variables import MAP_VARIABLES
 import src.utils.map_utils as map_utils
 import math
-import heapq
-
+from src.helpers.path_finder_helper import PATH_FINDER
 
 class MapObject():
     _target_position: Point = None
@@ -26,6 +25,7 @@ class MapObject():
     _frame_rate = 10
     _scale_respect_to_tile: float = 2
     _collide_circle_radius: int = 30
+    _current_path: list[Point] = []
     
     def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType):
         self._name = name
@@ -99,6 +99,11 @@ class MapObject():
     def draw(self, map_objects_group: pygame.sprite.Group):
         map_objects_group.add(self._sprite)
         
+        if len(self._current_path) > 0:
+            for point in self._current_path:
+                sprite = MySprite(get_scaled_image(GeneralTextures.SQUARE.name, MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
+                sprite.set_top_left((point.x - 1) * MAP_VARIABLES.tile_size.x, (point.y - 1) * MAP_VARIABLES.tile_size.y)
+                map_objects_group.add(sprite)
 
     def get_tuple_to_use_in_blits(self):
         return (self._sprite.image, self._sprite.rect)
@@ -132,7 +137,8 @@ class MapObject():
             self._set_random_target()
 
     def find_shortest_path(self, target_position: Point):
-        pass
+        result = PATH_FINDER.find_path(self._tile_in.get_position(), target_position)
+        self._current_path = result
     
     def is_collision_with_obstacle(self, next_position: tuple[int, int], obstacles: list[list[bool]]):
         # Calcula el área de colisión del personaje en la siguiente posición
@@ -150,6 +156,4 @@ class MapObject():
         distance = math.sqrt((circle1[0] - circle2[0])**2 + (circle1[1] - circle2[1])**2)
         return distance <= circle1[2] + circle2[2]
 
-    def get_path(self):
-        return self.find_shortest_path()
 

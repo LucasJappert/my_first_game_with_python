@@ -5,3 +5,7 @@ class TileInterface():
     _position: Point = None
     _blocked: bool = False
     _sprite: MySpriteInterface = None
+    _size: Point = None
+    
+    def get_position(self) -> Point:
+        pass

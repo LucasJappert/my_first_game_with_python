@@ -3,7 +3,7 @@ from src.models.map_object_model import MapObject
 from src.models.general_enums import MapObjectType
 
 class Enemy(MapObject):
-    initial_enemies = 5
+    initial_enemies = 100
     types = 24
 
     def __init__(self, tile_in: Tile, name: str):

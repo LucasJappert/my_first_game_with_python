@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -20,6 +21,7 @@ class Map():
     _tilemap = None
     _auxiliar_texts: dict[str, str] = {}
     _draw_grid = False
+    _tiles_grid_col_row = TILES_GRID_COL_ROW
     
     def __init__(self):
         pass
@@ -33,14 +35,15 @@ class Map():
                 self._tiles_info[self.get_tile_key(col, row)] = tile
         
         for i in range(Enemy.initial_enemies):
-            # available_enemies = list(EnemyList)
-            # enemy_name = random.choice(available_enemies).value.name
+            available_enemies = list(EnemyList)
+            enemy_name = random.choice(available_enemies).value.name
             
-            enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
+            # enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
             random_tile = self.get_random_tile(True)
             self._enemies.append(Enemy(random_tile, enemy_name))
         
         self._my_player = Player(self.get_center_tile(), "player_1")
+        
         
     # region EVENTS
     def on_tile_updated(self, tile: Tile):
@@ -64,8 +67,9 @@ class Map():
         random_key = random.choice(available_keys)
         return self._tiles_info[random_key]
     def get_center_tile(self):
-        center_tile = Point(int(TILES_GRID_COL_ROW.x / 2), int(TILES_GRID_COL_ROW.y / 2))
+        center_tile = Point(math.ceil(TILES_GRID_COL_ROW.x / 2), math.ceil(TILES_GRID_COL_ROW.y / 2))
         return self._tiles_info[self.get_tile_key(center_tile.x, center_tile.y)]
+        
     # endregion
     
     # region SETTERS
@@ -74,7 +78,7 @@ class Map():
         hovered_tile_x = int(mouse_position.x / MAP_VARIABLES.tile_size.x) + 1
         hovered_tile_y = int(mouse_position.y / MAP_VARIABLES.tile_size.y) + 1
         hovered_tile = self.get_tile_info(Point(hovered_tile_x, hovered_tile_y))
-        self._auxiliar_texts["mouse_position"] = f"x: {mouse_position.x}, y: {mouse_position.y}"
+        # self._auxiliar_texts["mouse_position"] = f"x: {mouse_position.x}, y: {mouse_position.y}"
         self._auxiliar_texts["hovered_tile"] = f"x: {hovered_tile._position.x}, y: {hovered_tile._position.y}"
         self._hovered_tile = hovered_tile
         

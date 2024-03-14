@@ -48,7 +48,5 @@ def _draw_mouse_square(map_objects_group: pygame.sprite.Group):
     # # square_text = MAP_VARIABLES.font.render(f"x: {fixed_mouse_position.x}, y: {fixed_mouse_position.y}", True, (255, 255, 255))
     # # MAP_VARIABLES.surface.blit(square_text, (200, 200))
     
-    # tile = map_utils.get_tile_map_from_mouse_position(fixed_mouse_position)
-    # square = 
 
 

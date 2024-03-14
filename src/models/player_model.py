@@ -2,7 +2,7 @@ import pygame
 from src.models.tile_model import Tile
 from src.models.map_object_model import MapObject
 from src.models.general_enums import MapObjectType
-from src.utils.map_utils import get_fixed_mouse_position
+from src.utils.map_utils import get_tile_map_from_mouse_position
 
 class Player(MapObject):
 
@@ -26,7 +26,4 @@ class Player(MapObject):
                 pass
 
     def on_right_click(self):
-        fixed_mouse_position = get_fixed_mouse_position()
-        # self._set_target_position(fixed_mouse_position)
-        result = self.find_shortest_path(fixed_mouse_position)
-        print(result)
+        result = self.find_shortest_path(get_tile_map_from_mouse_position())

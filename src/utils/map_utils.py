@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -12,8 +13,8 @@ def get_random_tile():
 
 def get_center_tile():
     result: Point = Point(0, 0)
-    result.x = int(TILES_GRID_COL_ROW.x * MAP_VARIABLES.tile_size.x / 2)
-    result.y = int(TILES_GRID_COL_ROW.y * MAP_VARIABLES.tile_size.y / 2)
+    result.x = math.ceil(TILES_GRID_COL_ROW.x * MAP_VARIABLES.tile_size.x / 2)
+    result.y = math.ceil(TILES_GRID_COL_ROW.y * MAP_VARIABLES.tile_size.y / 2)
     return result
 
 def get_fixed_mouse_position():
@@ -24,9 +25,11 @@ def get_fixed_mouse_position():
     aux_position_y = int(mouse_position[1] * (camera_surface_size[1]/pygame_screen_size[1]))
     return Point(aux_position_x, aux_position_y)
 
-def get_tile_map_from_mouse_position(mouse_position: Point):
+def get_tile_map_from_mouse_position():
     result: Point = Point(0, 0)
-    result.x = int(mouse_position.x / MAP_VARIABLES.tile_size.x)
-    result.y = int(mouse_position.y / MAP_VARIABLES.tile_size.y)
+    mouse_position = get_fixed_mouse_position()
+    result.x = int(mouse_position.x / MAP_VARIABLES.tile_size.x) + 1
+    result.y = int(mouse_position.y / MAP_VARIABLES.tile_size.y) + 1
     return result
+
 

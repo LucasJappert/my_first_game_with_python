@@ -4,6 +4,7 @@ from src.helpers.resources_helper import RESOURCES
 from src.helpers.my_logger_helper import MyLogger
 from src.models.map_model import MAP
 from src.utils.map_variables import MAP_VARIABLES
+from src.helpers.path_finder_helper import PATH_FINDER
 
 
 class Game:
@@ -18,6 +19,7 @@ class Game:
         MAP_VARIABLES.initialize()
         RESOURCES.load_textures()
         MAP.initialize()
+        PATH_FINDER.initialize(MAP._tiles_info)
 
         self.running = True
 
