@@ -4,7 +4,7 @@ import pygame
 from src.models.utils_models import Point
 from src.utils.map_variables import MAP_VARIABLES, TILES_GRID_COL_ROW
     
-def get_randome_tile():
+def get_random_tile():
     result: Point = Point(0, 0)
     result.x = random.randint(1, TILES_GRID_COL_ROW.x)
     result.y = random.randint(1, TILES_GRID_COL_ROW.y)

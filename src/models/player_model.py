@@ -1,13 +1,13 @@
 import pygame
-from src.models.utils_models import Point
+from src.models.tile_model import Tile
 from src.models.map_object_model import MapObject
 from src.models.general_enums import MapObjectType
 from src.utils.map_utils import get_fixed_mouse_position
 
 class Player(MapObject):
 
-    def __init__(self, center_position: Point, name: str):
-        super().__init__(center_position, name, MapObjectType.PLAYER)
+    def __init__(self, tile_in: Tile, name: str):
+        super().__init__(tile_in, name, MapObjectType.PLAYER)
         self._set_speed(4)
 
     #region GETTERs

@@ -1,10 +1,12 @@
 from enum import Enum
 import math
 import pygame
+from src.models.tile_interface import TileInterface
+from src.models.tile_model import Tile
 from src.models.general_enums import MapObjectType
 from src.helpers.resources_helper import get_scaled_image, GeneralTextures, DIRECTIONS
 from src.models.utils_models import Point
-from src.models.my_sprite import MyTransparentSprite
+from src.models.my_sprite_model import MySprite
 from src.utils.map_variables import MAP_VARIABLES
 import src.utils.map_utils as map_utils
 import math
@@ -13,11 +15,11 @@ import heapq
 
 class MapObject():
     _target_position: Point = None
-    _my_position: Point
+    _tile_in: TileInterface = None
     _name: str = ""
     _speed: float = 1
     _object_type: MapObjectType = MapObjectType.ENEMY
-    _sprite: MyTransparentSprite = None
+    _sprite: MySprite = None
     _direction: str = DIRECTIONS[0]
     _current_frame: int = 1
     _frame_counter = 0
@@ -25,9 +27,10 @@ class MapObject():
     _scale_respect_to_tile: float = 2
     _collide_circle_radius: int = 30
     
-    def __init__(self, center_position: Point, name: str, object_type: MapObjectType):
+    def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType):
         self._name = name
-        self._set_my_position(center_position.x, center_position.y)
+        self._set_my_tile_in(tile_in)
+        tile_in.set_blocked(True)
         self._object_type = object_type
 
         if object_type == MapObjectType.PLAYER:
@@ -39,12 +42,6 @@ class MapObject():
             # self._set_random_target()
 
     #region GETTERs
-    def get_center_x(self):
-        return self._my_position.x
-    
-    def get_center_y(self):
-        return self._my_position.y
-    
     def _get_rect_in_map(self):
         return self._sprite.rect
     #endregion
@@ -65,12 +62,12 @@ class MapObject():
         if target_position is None:
             self._current_frame = 2
             self._set_texture()
-    def _set_my_position(self, x: int, y: int):
-        self._my_position = Point(x, y)
+    def _set_my_tile_in(self, tile: Tile):
+        self._tile_in = tile
         if self._sprite is not None:
-            self._sprite.set_top_left_for_map_object(self._my_position, self._collide_circle_radius)
+            self._sprite.set_top_left_for_map_object(self._tile_in, self._collide_circle_radius)
     def _set_random_target(self):
-        random_tile = map_utils.get_randome_tile()
+        random_tile = map_utils.get_random_tile()
         random_x = random_tile.x * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.x / 2)
         random_y = random_tile.y * MAP_VARIABLES.tile_size.y + int(MAP_VARIABLES.tile_size.y / 2)
         self._set_target_position(Point(random_x, random_y))
@@ -81,8 +78,8 @@ class MapObject():
         texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
         # if self._object_type == MapObjectType.ENEMY: texture = get_scaled_image(texture_key)
         # else: texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
-        self._sprite = MyTransparentSprite(texture)
-        self._sprite.set_top_left_for_map_object(self._my_position, self._collide_circle_radius)
+        self._sprite = MySprite(texture)
+        self._sprite.set_top_left_for_map_object(self._tile_in, self._collide_circle_radius)
         
     def _try_set_next_frame(self):
         if self._target_position is None: return
@@ -107,11 +104,12 @@ class MapObject():
         return (self._sprite.image, self._sprite.rect)
 
     def _try_to_move(self):
+        # FIXME
         if self._target_position is None: return
 
         # Calculate the direction to the target
-        dx = self._target_position.x - self._my_position.x
-        dy = self._target_position.y - self._my_position.y
+        dx = self._target_position.x - self._tile_in.x
+        dy = self._target_position.y - self._tile_in.y
         distance = math.hypot(dx, dy)
         if distance <= 0: return self._set_target_position(None)
 
@@ -123,11 +121,11 @@ class MapObject():
 
         self._set_direction_from_dx_dy(dx, dy)
 
-        self._set_my_position(self.get_center_x() + dx, self.get_center_y() + dy)
+        self._set_my_tile_in(self.get_center_x() + dx, self.get_center_y() + dy)
 
         # If the object is close enough to the target, stop moving
         if math.hypot(self._target_position.x - self.get_center_x(), self._target_position.y - self.get_center_y()) <= self._speed:
-            self._set_my_position(self._target_position.x, self._target_position.y)
+            self._set_my_tile_in(self._target_position.x, self._target_position.y)
             self._set_target_position(None)
 
         if self._target_position is None and self._object_type == MapObjectType.ENEMY:

@@ -12,7 +12,6 @@ from src.models.fps import FPS
 from src.helpers.resources_helper import RESOURCES, get_scaled_image, GeneralTextures
 from src.models.map_object_model import MapObject
 
-
 class Map():
     _tiles_info: dict[str, Tile] = {}
     _enemies: list[Enemy] = []
@@ -20,7 +19,7 @@ class Map():
     _hovered_tile: Tile = None
     _tilemap = None
     _auxiliar_texts: dict[str, str] = {}
-    _draw_grid = True
+    _draw_grid = False
     
     def __init__(self):
         pass
@@ -29,30 +28,44 @@ class Map():
         # Set the tiles info
         for row in range(1, TILES_GRID_COL_ROW.y + 1, 1):
             for col in range(1, TILES_GRID_COL_ROW.x + 1, 1):
-                self._tiles_info[f"{col}_{row}"] = Tile(Point(col, row))
+                tile = Tile(Point(col, row))
+                tile.subscribe(self.on_tile_updated)
+                self._tiles_info[self.get_tile_key(col, row)] = tile
         
         for i in range(Enemy.initial_enemies):
             # available_enemies = list(EnemyList)
             # enemy_name = random.choice(available_enemies).value.name
             
             enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
-            
-            random_tile = map_utils.get_randome_tile()
-            print(f"random_tile: x{random_tile.x}, y{random_tile.y}")
-            random_x = random_tile.x * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.x / 2)
-            random_y = random_tile.y * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.y / 2)
-            center_position = Point(random_x, random_y)
-            self._enemies.append(Enemy(center_position, enemy_name))
+            random_tile = self.get_random_tile(True)
+            self._enemies.append(Enemy(random_tile, enemy_name))
         
-        self._my_player = Player(map_utils.get_center_tile(), "player_1")
+        self._my_player = Player(self.get_center_tile(), "player_1")
+        
+    # region EVENTS
+    def on_tile_updated(self, tile: Tile):
+        self._refresh_tilemap()
+        print(f"tilemap was updated! {tile._position.x}, {tile._position.y}")        
+    # endregion
         
     # region GETTERS
+    def get_tile_key(self, col: int, row: int):
+        return f"{col}_{row}"
     def get_tile_info(self, position: Point):
         return self._tiles_info[f"{position.x}_{position.y}"]
     def get_enemies(self):
         return self._enemies
     def get_my_player(self):
         return self._my_player
+    def get_random_tile(self, validate_blocked_tiles: bool = False):
+        available_keys = list(self._tiles_info.keys())
+        if validate_blocked_tiles:
+            available_keys = [key for key, value in self._tiles_info.items() if not value._blocked]
+        random_key = random.choice(available_keys)
+        return self._tiles_info[random_key]
+    def get_center_tile(self):
+        center_tile = Point(int(TILES_GRID_COL_ROW.x / 2), int(TILES_GRID_COL_ROW.y / 2))
+        return self._tiles_info[self.get_tile_key(center_tile.x, center_tile.y)]
     # endregion
     
     # region SETTERS
@@ -66,6 +79,7 @@ class Map():
         self._hovered_tile = hovered_tile
         
         # self._tile_hovered = 
+    
     # endregion
     
     def update(self):
@@ -103,6 +117,9 @@ class Map():
             if event.key == pygame.K_g:
                 self._draw_grid = not self._draw_grid
                 self._refresh_tilemap()
+            if event.key == pygame.K_e:
+                tile = self._tiles_info[self.get_tile_key(5, 5)]
+                tile.set_blocked(not tile._blocked)
     
     def _draw_terrain(self):
         if self._tilemap is None:
@@ -127,6 +144,10 @@ class Map():
                 if self._draw_grid:
                     pygame.draw.rect(MAP_VARIABLES.surface, (0, 0, 0), rect, 1)
                     tilemap.blit(square, rect)
+                tile_key = self.get_tile_key(x + 1, y + 1)
+                if self._tiles_info[tile_key]._blocked:
+                    pygame.draw.rect(MAP_VARIABLES.surface, (255, 0, 0), rect, 1)
+                    tilemap.blit(square, rect)
 
         # Devolver la superficie del tilemap
         self._tilemap = tilemap
@@ -137,7 +158,7 @@ class Map():
             objects.append(enemy)
         objects.append(self._my_player)
 
-        ordered_list = sorted(objects, key=lambda obj: (obj.get_center_y(), obj.get_center_x()))
+        ordered_list = sorted(objects, key=lambda obj: (obj._tile_in._position.y, obj._tile_in._position.x))
 
         return ordered_list
     

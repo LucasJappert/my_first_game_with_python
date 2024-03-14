@@ -4,7 +4,7 @@ from src.helpers.my_logger_helper import MyLogger
 from src.models.fps import FPS
 from src.utils.map_variables import MAP_VARIABLES
 from src.models.map_model import MAP
-from src.models.my_sprite import MyTransparentSprite
+from src.models.my_sprite_model import MySprite
 import src.utils.map_utils as map_utils
 from src.models.map_object_model import MapObject
 
