@@ -98,8 +98,13 @@ class Map():
     def draw(self):
         self._draw_terrain()
         
+        ordered_map_objects = self._get_ordered_map_objects()
         map_objects_group = pygame.sprite.Group()
-        for obj in self._get_ordered_map_objects():
+        
+        for obj in ordered_map_objects:
+            obj.draw_path(map_objects_group)
+        
+        for obj in ordered_map_objects:
             obj.draw(map_objects_group)
         
         if self._hovered_tile:

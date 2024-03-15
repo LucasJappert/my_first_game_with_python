@@ -99,9 +99,10 @@ class MapObject():
     def draw(self, map_objects_group: pygame.sprite.Group):
         map_objects_group.add(self._sprite)
         
+    def draw_path(self, map_objects_group: pygame.sprite.Group):
         if len(self._current_path) > 0:
             for point in self._current_path:
-                sprite = MySprite(get_scaled_image(GeneralTextures.SQUARE.name, MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
+                sprite = MySprite(get_scaled_image(GeneralTextures.CROSS.name, MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
                 sprite.set_top_left((point.x - 1) * MAP_VARIABLES.tile_size.x, (point.y - 1) * MAP_VARIABLES.tile_size.y)
                 map_objects_group.add(sprite)
 

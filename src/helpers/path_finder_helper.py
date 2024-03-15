@@ -92,6 +92,14 @@ class PathFinder():
             return
         if key_of_neighbor in self._closed_map:
             return
+        #Si el nodo destino está en diagonal, entonces valido que los nodos adyacentes no estén bloqueados
+        if delta_row != 0 and delta_col != 0:
+            neighbor1 = Node.get_key_from_point(Point(current_node._col, neighbor_row))
+            neighbor2 = Node.get_key_from_point(Point(neighbor_col, current_node._row))
+            tile1 = self._tiles_info[neighbor1]
+            tile2 = self._tiles_info[neighbor2]
+            if tile1._blocked and tile2._blocked:
+                return
         
         cost_to_adjacent = self._cost_to_adjacent(delta_row, delta_col) + current_node._g
         cost_to_goal = self._cost_to_goal(neighbor_row, neighbor_col)

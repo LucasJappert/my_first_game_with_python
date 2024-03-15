@@ -6,6 +6,7 @@ class GeneralTextures(Enum):
     GRASS = "src/assets/terrain/grass.png"
     SQUARE = "src/assets/square.png"
     PLAYER = "src/assets/players/my-player.png"
+    CROSS = "src/assets/cross.png"
     
 class Enemy():
     path: str
