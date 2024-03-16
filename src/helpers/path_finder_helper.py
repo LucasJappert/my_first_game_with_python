@@ -36,6 +36,8 @@ class Node:
 
 class PathFinder():
     _tiles_info: dict[str, Tile] = {}
+    _consider_diagonal_path = False
+    _add_current_position_to_path = False
     
     """Pathfinder that implements the A* search in a map."""
     def __init__(self):
@@ -93,7 +95,8 @@ class PathFinder():
         if key_of_neighbor in self._closed_map:
             return
         #Si el nodo destino está en diagonal, entonces valido que los nodos adyacentes no estén bloqueados
-        if delta_row != 0 and delta_col != 0:
+        if abs(delta_row) == 1 and abs(delta_col) == 1:
+            if not self._consider_diagonal_path: return
             neighbor1 = Node.get_key_from_point(Point(current_node._col, neighbor_row))
             neighbor2 = Node.get_key_from_point(Point(neighbor_col, current_node._row))
             tile1 = self._tiles_info[neighbor1]
@@ -124,7 +127,8 @@ class PathFinder():
             result.append(Point(current_node._col, current_node._row))
             current_node = current_node._parent_node
             
-        result.append(Point(current_node._col, current_node._row))
+        if self._add_current_position_to_path:
+            result.append(Point(current_node._col, current_node._row))
         result.reverse()
         return result
     

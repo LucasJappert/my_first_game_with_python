@@ -6,8 +6,8 @@ from src.utils.map_utils import get_tile_map_from_mouse_position
 
 class Player(MapObject):
 
-    def __init__(self, tile_in: Tile, name: str):
-        super().__init__(tile_in, name, MapObjectType.PLAYER)
+    def __init__(self, tile_in: Tile, name: str, tiles_info: dict[str, Tile]):
+        super().__init__(tile_in, name, MapObjectType.PLAYER, tiles_info)
         self._set_speed(4)
 
     #region GETTERs
@@ -26,4 +26,4 @@ class Player(MapObject):
                 pass
 
     def on_right_click(self):
-        result = self.find_shortest_path(get_tile_map_from_mouse_position())
+        result = self.find_and_set_shortest_path(get_tile_map_from_mouse_position())

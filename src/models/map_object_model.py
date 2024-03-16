@@ -1,7 +1,7 @@
 from enum import Enum
 import math
+import random
 import pygame
-from src.models.tile_interface import TileInterface
 from src.models.tile_model import Tile
 from src.models.general_enums import MapObjectType
 from src.helpers.resources_helper import get_scaled_image, GeneralTextures, DIRECTIONS
@@ -14,7 +14,17 @@ from src.helpers.path_finder_helper import PATH_FINDER
 
 class MapObject():
     _target_position: Point = None
-    _tile_in: TileInterface = None
+    """
+    The target position where the object is moving to. If None, the object is not moving. \n
+    The x and y coordinates are in pixels.
+    """
+    _current_position: Point = None
+    """
+    The target position where the object is moving to. If None, the object is not moving. \n
+    The x and y coordinates are in pixels.
+    """
+    _tile_in: Tile = None
+    _tiles_info: dict[str, Tile] = {}
     _name: str = ""
     _speed: float = 1
     _object_type: MapObjectType = MapObjectType.ENEMY
@@ -26,12 +36,14 @@ class MapObject():
     _scale_respect_to_tile: float = 2
     _collide_circle_radius: int = 30
     _current_path: list[Point] = []
+    _draw_path = True
     
-    def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType):
+    def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType, tiles_info: dict[str, Tile]):
+        self._tiles_info = tiles_info
         self._name = name
         self._set_my_tile_in(tile_in)
-        tile_in.set_blocked(True)
         self._object_type = object_type
+        self._set_current_position(tile_in.get_position_in_pixels().x, tile_in.get_position_in_pixels().y)
 
         if object_type == MapObjectType.PLAYER:
             self._set_texture()
@@ -39,11 +51,16 @@ class MapObject():
         if object_type == MapObjectType.ENEMY:
             self._scale_respect_to_tile = 1.5
             self._set_texture()
-            # self._set_random_target()
+            
 
     #region GETTERs
     def _get_rect_in_map(self):
         return self._sprite.rect
+    def _get_random_unblocked_point(self):
+        unblocked_tiles = [tile for tile in self._tiles_info.values() if not tile._blocked]
+        if len(unblocked_tiles) == 0: return None
+        unblocked_tile = random.choice(unblocked_tiles)
+        return unblocked_tile.get_position()
     #endregion
 
     #region SETTERs
@@ -62,10 +79,15 @@ class MapObject():
         if target_position is None:
             self._current_frame = 2
             self._set_texture()
-    def _set_my_tile_in(self, tile: Tile):
-        self._tile_in = tile
+    def _set_my_tile_in(self, new_tile_in: Tile):
+        if self._tile_in is not None:
+            self._tile_in.set_blocked(False)
+        self._tile_in = new_tile_in
+        self._tile_in.set_blocked(True)
+    def _set_current_position(self, x: int, y: int):
+        self._current_position = Point(x, y)
         if self._sprite is not None:
-            self._sprite.set_top_left_for_map_object(self._tile_in, self._collide_circle_radius)
+            self._sprite.set_top_left_for_map_object(self._current_position)
     def _set_random_target(self):
         random_tile = map_utils.get_random_tile()
         random_x = random_tile.x * MAP_VARIABLES.tile_size.x + int(MAP_VARIABLES.tile_size.x / 2)
@@ -79,7 +101,7 @@ class MapObject():
         # if self._object_type == MapObjectType.ENEMY: texture = get_scaled_image(texture_key)
         # else: texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
         self._sprite = MySprite(texture)
-        self._sprite.set_top_left_for_map_object(self._tile_in, self._collide_circle_radius)
+        self._sprite.set_top_left_for_map_object(self._current_position)
         
     def _try_set_next_frame(self):
         if self._target_position is None: return
@@ -93,6 +115,12 @@ class MapObject():
     #endregion
 
     def update(self):
+        if self._object_type == MapObjectType.ENEMY:
+            if self._target_position is None and len(self._current_path) == 0:
+                if random.randint(0, 100) < 1:
+                    random_unblocked_point = self._get_random_unblocked_point()
+                    self.find_and_set_shortest_path(random_unblocked_point)
+                                            
         self._try_set_next_frame()
         self._try_to_move()
 
@@ -100,22 +128,30 @@ class MapObject():
         map_objects_group.add(self._sprite)
         
     def draw_path(self, map_objects_group: pygame.sprite.Group):
-        if len(self._current_path) > 0:
-            for point in self._current_path:
-                sprite = MySprite(get_scaled_image(GeneralTextures.CROSS.name, MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
-                sprite.set_top_left((point.x - 1) * MAP_VARIABLES.tile_size.x, (point.y - 1) * MAP_VARIABLES.tile_size.y)
-                map_objects_group.add(sprite)
-
-    def get_tuple_to_use_in_blits(self):
-        return (self._sprite.image, self._sprite.rect)
+        if not self._draw_path: return
+        if len(self._current_path) == 0: return
+        
+        for point in self._current_path:
+            sprite = MySprite(get_scaled_image(GeneralTextures.CROSS.name, MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
+            sprite.set_top_left((point.x - 1) * MAP_VARIABLES.tile_size.x, (point.y - 1) * MAP_VARIABLES.tile_size.y)
+            map_objects_group.add(sprite)
 
     def _try_to_move(self):
-        # FIXME
-        if self._target_position is None: return
+        if self._target_position is None:
+            if len(self._current_path) == 0: return
+
+            next_tile_to_move = self._current_path.pop(0)
+            
+            new_tile_in = self._tiles_info[Tile.get_tile_key(next_tile_to_move.x, next_tile_to_move.y)]
+            self._set_my_tile_in(new_tile_in)
+            
+            target_x = int((next_tile_to_move.x - 0.5) * self._tile_in._size.x)
+            target_y = int((next_tile_to_move.y - 0.5) * self._tile_in._size.y)
+            self._set_target_position(Point(target_x, target_y))
 
         # Calculate the direction to the target
-        dx = self._target_position.x - self._tile_in.x
-        dy = self._target_position.y - self._tile_in.y
+        dx = self._target_position.x - self._current_position.x
+        dy = self._target_position.y - self._current_position.y
         distance = math.hypot(dx, dy)
         if distance <= 0: return self._set_target_position(None)
 
@@ -127,18 +163,16 @@ class MapObject():
 
         self._set_direction_from_dx_dy(dx, dy)
 
-        self._set_my_tile_in(self.get_center_x() + dx, self.get_center_y() + dy)
+        self._set_current_position(self._current_position.x + dx, self._current_position.y + dy)
 
         # If the object is close enough to the target, stop moving
-        if math.hypot(self._target_position.x - self.get_center_x(), self._target_position.y - self.get_center_y()) <= self._speed:
-            self._set_my_tile_in(self._target_position.x, self._target_position.y)
+        if math.hypot(self._target_position.x - self._current_position.x, self._target_position.y - self._current_position.y) <= self._speed:
+            self._set_current_position(self._target_position.x, self._target_position.y)
             self._set_target_position(None)
 
-        if self._target_position is None and self._object_type == MapObjectType.ENEMY:
-            self._set_random_target()
 
-    def find_shortest_path(self, target_position: Point):
-        result = PATH_FINDER.find_path(self._tile_in.get_position(), target_position)
+    def find_and_set_shortest_path(self, target_point: Point):
+        result = PATH_FINDER.find_path(self._tile_in.get_position(), target_point)
         self._current_path = result
     
     def is_collision_with_obstacle(self, next_position: tuple[int, int], obstacles: list[list[bool]]):

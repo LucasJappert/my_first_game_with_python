@@ -6,8 +6,10 @@ from src.utils.map_variables import MAP_VARIABLES
 from src.events.event_observers import Event
         
 class Tile(TileInterface):
+    _tiles_info: dict[str, "Tile"] = {}
     
-    def __init__(self, position: Point):
+    def __init__(self, position: Point, tiles_info: dict[str, "Tile"]):
+        self._tiles_info = tiles_info
         self._position = position
         self._blocked = False
         self._size = MAP_VARIABLES.tile_size
@@ -24,4 +26,11 @@ class Tile(TileInterface):
         
     def get_position(self):
         return self._position
+    
+    def get_position_in_pixels(self):
+        return Point(int((self._position.x - 0.5) * self._size.x), int((self._position.y - 0.5) * self._size.y))
+    
+    @staticmethod
+    def get_tile_key(col: int, row: int):
+        return f"{col}_{row}"
         

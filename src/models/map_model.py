@@ -30,9 +30,9 @@ class Map():
         # Set the tiles info
         for row in range(1, TILES_GRID_COL_ROW.y + 1, 1):
             for col in range(1, TILES_GRID_COL_ROW.x + 1, 1):
-                tile = Tile(Point(col, row))
+                tile = Tile(Point(col, row), self._tiles_info)
                 tile.subscribe(self.on_tile_updated)
-                self._tiles_info[self.get_tile_key(col, row)] = tile
+                self._tiles_info[Tile.get_tile_key(col, row)] = tile
         
         for i in range(Enemy.initial_enemies):
             available_enemies = list(EnemyList)
@@ -40,9 +40,9 @@ class Map():
             
             # enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
             random_tile = self.get_random_tile(True)
-            self._enemies.append(Enemy(random_tile, enemy_name))
+            self._enemies.append(Enemy(random_tile, enemy_name, self._tiles_info))
         
-        self._my_player = Player(self.get_center_tile(), "player_1")
+        self._my_player = Player(self.get_center_tile(), "player_1", self._tiles_info)
         
         
     # region EVENTS
@@ -52,8 +52,6 @@ class Map():
     # endregion
         
     # region GETTERS
-    def get_tile_key(self, col: int, row: int):
-        return f"{col}_{row}"
     def get_tile_info(self, position: Point):
         return self._tiles_info[f"{position.x}_{position.y}"]
     def get_enemies(self):
@@ -68,7 +66,7 @@ class Map():
         return self._tiles_info[random_key]
     def get_center_tile(self):
         center_tile = Point(math.ceil(TILES_GRID_COL_ROW.x / 2), math.ceil(TILES_GRID_COL_ROW.y / 2))
-        return self._tiles_info[self.get_tile_key(center_tile.x, center_tile.y)]
+        return self._tiles_info[Tile.get_tile_key(center_tile.x, center_tile.y)]
         
     # endregion
     
@@ -127,7 +125,7 @@ class Map():
                 self._draw_grid = not self._draw_grid
                 self._refresh_tilemap()
             if event.key == pygame.K_e:
-                tile = self._tiles_info[self.get_tile_key(5, 5)]
+                tile = self._tiles_info[Tile.get_tile_key(5, 5)]
                 tile.set_blocked(not tile._blocked)
     
     def _draw_terrain(self):
@@ -153,7 +151,7 @@ class Map():
                 if self._draw_grid:
                     pygame.draw.rect(MAP_VARIABLES.surface, (0, 0, 0), rect, 1)
                     tilemap.blit(square, rect)
-                tile_key = self.get_tile_key(x + 1, y + 1)
+                tile_key = Tile.get_tile_key(x + 1, y + 1)
                 if self._tiles_info[tile_key]._blocked:
                     pygame.draw.rect(MAP_VARIABLES.surface, (255, 0, 0), rect, 1)
                     tilemap.blit(square, rect)
