@@ -13,6 +13,8 @@ import src.utils.map_utils as map_utils
 import math
 from src.helpers.path_finder_helper import PATH_FINDER
 
+_IDS_COUNTER = 0
+
 class MapObject():
     _target_position: Point = None
     """
@@ -40,23 +42,26 @@ class MapObject():
     _collide_circle_radius: int = 30
     _current_path: list[Point] = []
     _draw_path = True
+    _id = 0
 
     def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType, tiles_info: dict[str, Tile]):
+        global _IDS_COUNTER
+        self._id = _IDS_COUNTER
+        _IDS_COUNTER += 1
         self._tiles_info = tiles_info
         self._name = name
         self._set_my_tile_in(tile_in)
         self._object_type = object_type
-        self._set_current_position(tile_in.get_position_in_pixels().x, tile_in.get_position_in_pixels().y)
-
         self._set_sprites()
-        self._current_sprite_key = self._get_sprite_key(self._direction, self._current_frame)
+        
+        self._set_current_position(tile_in.get_position_in_pixels().x, tile_in.get_position_in_pixels().y)
         
         if object_type == MapObjectType.PLAYER:
-            self._set_texture()
+            self._update_sprite()
 
         if object_type == MapObjectType.ENEMY:
             self._scale_respect_to_tile = 1.5
-            self._set_texture()
+            self._update_sprite()
 
 
     #region GETTERs
@@ -76,10 +81,12 @@ class MapObject():
         for direction in DIRECTIONS:
             for frame in range(1, 4):
                 texture_key = self._get_sprite_key(direction, frame)
-                texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
+                texture = get_scaled_image(texture_key)
                 self._sprites[texture_key] = MySprite(texture)
+        self._sprite = self._sprites[self._get_sprite_key(self._direction, self._current_frame)]
     
     def _set_direction_from_dx_dy(self, dx: float, dy: float):
+        # return
         #TODO: Check abs function
         if abs(dx) > abs(dy):
             if dx > 0: self._set_direction(DIRECTIONS[2])
@@ -89,12 +96,12 @@ class MapObject():
             else: self._set_direction(DIRECTIONS[3])
     def _set_direction(self, direction: str):
         self._direction = direction
-        self._set_texture()
+        self._update_sprite()
     def _set_target_position(self, target_position: Point):
         self._target_position = target_position
         if target_position is None:
             self._current_frame = 2
-            self._set_texture()
+            self._update_sprite()
     def _set_my_tile_in(self, new_tile_in: Tile):
         if self._tile_in is not None:
             self._tile_in.set_blocked(False)
@@ -112,11 +119,16 @@ class MapObject():
     def _set_speed(self, value: float):
         self._speed = value
         
-    def _set_texture(self):#TODO: REPLACE
-        texture_key = f"{self._name}_{self._direction}_{self._current_frame}"
-        texture = get_scaled_image(texture_key)
-        self._sprite = MySprite(texture)
+    def _update_sprite(self):
+        texture = get_scaled_image(self._get_sprite_key(self._direction, self._current_frame))
+        self._sprite.image = texture
+        self._sprite.rect = self._sprite.image.get_rect()
         self._sprite.set_top_left_for_map_object(self._current_position)
+        
+        # SHOULD BE BETTER BUT IT'S NOT WORKING, SPRITES DISSAPEAR WHEN MOVING
+        # self._current_sprite_key = self._get_sprite_key(self._direction, self._current_frame)
+        # self._sprite = self._sprites[self._current_sprite_key]
+        # self._sprite.set_top_left_for_map_object(self._current_position)
 
     def _try_set_next_frame(self):
         if self._target_position is None: return
@@ -125,7 +137,7 @@ class MapObject():
             self._frame_counter = 0
             self._current_frame += 1
             if self._current_frame > 3: self._current_frame = 1
-            self._set_texture()
+            self._update_sprite()
 
     #endregion
 

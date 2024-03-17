@@ -21,5 +21,5 @@ class MySprite(MySpriteInterface):
         # top_left_y = int(tile._position.y * tile._size.y - self.image.get_height())
         top_left_x = int(position.x - self.image.get_width() * 0.5)
         top_left_y = int(position.y + MAP_VARIABLES.tile_size.y * 0.5 - self.image.get_height())
-        self.set_top_left(top_left_x, top_left_y)
+        self.rect.topleft = (top_left_x, top_left_y)
     

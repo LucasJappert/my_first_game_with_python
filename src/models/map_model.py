@@ -41,7 +41,8 @@ class Map():
             enemy_name = f"enemy_1"
             
             random_tile = self.get_random_tile(True)
-            self._enemies.append(Enemy(random_tile, enemy_name, self._tiles_info))
+            enemy = Enemy(random_tile, enemy_name, self._tiles_info)
+            self._enemies.append(enemy)
         
         self._my_player = Player(self.get_center_tile(), "player_1", self._tiles_info)
         
@@ -93,27 +94,28 @@ class Map():
 
         self._my_player.update()
         
+    map_objects_group = pygame.sprite.Group()
     def draw(self):
         self._draw_terrain()
         
         ordered_map_objects = self._get_ordered_map_objects()
-        map_objects_group = pygame.sprite.Group()
+        self.map_objects_group.empty()
         
         # for obj in ordered_map_objects:
         #     obj.draw_path(map_objects_group)
-        self._draw_depth_1(map_objects_group)
+        self._draw_depth_1()
         
         for obj in ordered_map_objects:
-            obj.draw(map_objects_group)
+            obj.draw(self.map_objects_group)
         
         if self._hovered_tile:
-            map_objects_group.add(self._hovered_tile._sprite)
+            self.map_objects_group.add(self._hovered_tile._sprite)
         
         for index, (key, value) in enumerate(self._auxiliar_texts.items()):
             text = MAP_VARIABLES.font.render(f"{key}: {value}", True, (255, 255, 255))
             MAP_VARIABLES.surface.blit(text, (10, 10 + index * 30))
             
-        map_objects_group.draw(MAP_VARIABLES.surface)
+        self.map_objects_group.draw(MAP_VARIABLES.surface)
     
     def handle_events(self, event: pygame.event.Event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -167,9 +169,9 @@ class Map():
 
         return ordered_list
     
-    def _draw_depth_1(self, map_objects_group: pygame.sprite.Group):
+    def _draw_depth_1(self):
         bloqued_tiles = list(filter(lambda tile: tile._blocked, self._tiles_info.values()))
         for tile in bloqued_tiles:
-            map_objects_group.add(tile._sprite)
+            self.map_objects_group.add(tile._sprite)
     
 MAP = Map()
