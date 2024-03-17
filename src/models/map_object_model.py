@@ -1,3 +1,4 @@
+import copy
 from enum import Enum
 import math
 import random
@@ -28,6 +29,8 @@ class MapObject():
     _name: str = ""
     _speed: float = 1
     _object_type: MapObjectType = MapObjectType.ENEMY
+    _sprites: dict[str, MySprite] = {}
+    _current_sprite_key: str = ""
     _sprite: MySprite = None
     _direction: str = DIRECTIONS[0]
     _current_frame: int = 1
@@ -37,7 +40,7 @@ class MapObject():
     _collide_circle_radius: int = 30
     _current_path: list[Point] = []
     _draw_path = True
-    
+
     def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType, tiles_info: dict[str, Tile]):
         self._tiles_info = tiles_info
         self._name = name
@@ -45,13 +48,16 @@ class MapObject():
         self._object_type = object_type
         self._set_current_position(tile_in.get_position_in_pixels().x, tile_in.get_position_in_pixels().y)
 
+        self._set_sprites()
+        self._current_sprite_key = self._get_sprite_key(self._direction, self._current_frame)
+        
         if object_type == MapObjectType.PLAYER:
             self._set_texture()
 
         if object_type == MapObjectType.ENEMY:
             self._scale_respect_to_tile = 1.5
             self._set_texture()
-            
+
 
     #region GETTERs
     def _get_rect_in_map(self):
@@ -61,10 +67,20 @@ class MapObject():
         if len(unblocked_tiles) == 0: return None
         unblocked_tile = random.choice(unblocked_tiles)
         return unblocked_tile.get_position()
+    def _get_sprite_key(self, direction: str, frame: int):
+        return f"{self._name}_{direction}_{frame}"
     #endregion
 
     #region SETTERs
+    def _set_sprites(self):
+        for direction in DIRECTIONS:
+            for frame in range(1, 4):
+                texture_key = self._get_sprite_key(direction, frame)
+                texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
+                self._sprites[texture_key] = MySprite(texture)
+    
     def _set_direction_from_dx_dy(self, dx: float, dy: float):
+        #TODO: Check abs function
         if abs(dx) > abs(dy):
             if dx > 0: self._set_direction(DIRECTIONS[2])
             else: self._set_direction(DIRECTIONS[1])
@@ -95,14 +111,13 @@ class MapObject():
         self._set_target_position(Point(random_x, random_y))
     def _set_speed(self, value: float):
         self._speed = value
-    def _set_texture(self):
+        
+    def _set_texture(self):#TODO: REPLACE
         texture_key = f"{self._name}_{self._direction}_{self._current_frame}"
-        texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
-        # if self._object_type == MapObjectType.ENEMY: texture = get_scaled_image(texture_key)
-        # else: texture = get_scaled_image(texture_key, int(MAP_VARIABLES.tile_size.x * self._scale_respect_to_tile), int(MAP_VARIABLES.tile_size.y * self._scale_respect_to_tile))
+        texture = get_scaled_image(texture_key)
         self._sprite = MySprite(texture)
         self._sprite.set_top_left_for_map_object(self._current_position)
-        
+
     def _try_set_next_frame(self):
         if self._target_position is None: return
         self._frame_counter += 1
@@ -111,7 +126,7 @@ class MapObject():
             self._current_frame += 1
             if self._current_frame > 3: self._current_frame = 1
             self._set_texture()
-    
+
     #endregion
 
     def update(self):
@@ -120,31 +135,32 @@ class MapObject():
                 if random.randint(0, 100) < 1:
                     random_unblocked_point = self._get_random_unblocked_point()
                     self.find_and_set_shortest_path(random_unblocked_point)
-                                            
+
         self._try_set_next_frame()
         self._try_to_move()
 
     def draw(self, map_objects_group: pygame.sprite.Group):
         map_objects_group.add(self._sprite)
-        
+
     def draw_path(self, map_objects_group: pygame.sprite.Group):
         if not self._draw_path: return
         if len(self._current_path) == 0: return
-        
+
         for point in self._current_path:
             sprite = MySprite(get_scaled_image(GeneralTextures.CROSS.name, MAP_VARIABLES.tile_size.x, MAP_VARIABLES.tile_size.y))
             sprite.set_top_left((point.x - 1) * MAP_VARIABLES.tile_size.x, (point.y - 1) * MAP_VARIABLES.tile_size.y)
             map_objects_group.add(sprite)
 
     def _try_to_move(self):
+        # return
         if self._target_position is None:
             if len(self._current_path) == 0: return
 
             next_tile_to_move = self._current_path.pop(0)
-            
+
             new_tile_in = self._tiles_info[Tile.get_tile_key(next_tile_to_move.x, next_tile_to_move.y)]
             self._set_my_tile_in(new_tile_in)
-            
+
             target_x = int((next_tile_to_move.x - 0.5) * self._tile_in._size.x)
             target_y = int((next_tile_to_move.y - 0.5) * self._tile_in._size.y)
             self._set_target_position(Point(target_x, target_y))
@@ -174,7 +190,7 @@ class MapObject():
     def find_and_set_shortest_path(self, target_point: Point):
         result = PATH_FINDER.find_path(self._tile_in.get_position(), target_point)
         self._current_path = result
-    
+
     def is_collision_with_obstacle(self, next_position: tuple[int, int], obstacles: list[list[bool]]):
         # Calcula el área de colisión del personaje en la siguiente posición
         next_collision_area = (next_position[0], next_position[1], self._collide_circle_radius)

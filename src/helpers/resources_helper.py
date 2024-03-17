@@ -44,7 +44,7 @@ class Resources:
         enemies_by_rows = 4
         frames_by_animation = 3
         enemies_spritesheet = pygame.image.load("src/assets/enemies/enemies-spritesheet.png").convert_alpha()
-        frame_size = 32
+        frame_size = 64
         for row in range(enemies_by_rows):
             for column in range(enemies_by_columns):
                 enemy_id = row * enemies_by_columns + column + 1
@@ -60,7 +60,7 @@ class Resources:
         players_by_rows = 2
         frames_by_animation = 3
         players_spritesheet = pygame.image.load("src/assets/players/players-spritesheet.png").convert_alpha()
-        frame_size = 32
+        frame_size = 64
         for row in range(players_by_rows):
             for column in range(players_by_columns):
                 player_id = row * players_by_columns + column + 1

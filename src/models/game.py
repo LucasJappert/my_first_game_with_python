@@ -35,8 +35,8 @@ class Game:
             self.draw()
             
             handle_keyboard_events(self)
-        
-        pygame.quit()
+
+        # # pygame.quit()
         MyLogger.green("###################### GAME OVER! ######################")
 
     def update(self):

@@ -13,6 +13,7 @@ class Node:
     _f: int = 0
     """The total cost of moving from the start node to the end node through this node."""
     _parent_node: "Node" = None
+    _key = ""
     
     def __init__(self, row: int, col: int, g: int, h: int, parent_node: "Node"):
         self._row = row
@@ -21,18 +22,17 @@ class Node:
         self._h = h
         self._f = g + h
         self._parent_node = parent_node
+        self._key = Node.get_key_from_point(col, row)
     def set_cost(self, g: int, h: int):
         self._g = g
         self._h = h
         self._f = g + h
-    def get_key(self):
-        return Node.get_key_from_point(Point(self._col, self._row))
     def __lt__(self, other: "Node"):
         """This method is used to compare two nodes."""
         return self._f < other._f
     @staticmethod
-    def get_key_from_point(point: Point):
-        return f"{point.x}_{point.y}"
+    def get_key_from_point(x: int, y: int):
+        return f"{x}_{y}"
 
 class PathFinder():
     _tiles_info: dict[str, Tile] = {}
@@ -66,9 +66,9 @@ class PathFinder():
         
         while len(self._open_list) > 0:
             current_node = heapq.heappop(self._open_list)
-            del self._open_map[current_node.get_key()]
+            del self._open_map[current_node._key]
             
-            self._closed_map[current_node.get_key()] = current_node
+            self._closed_map[current_node._key] = current_node
             
             if current_node._row == goal_point.y and current_node._col == goal_point.x:
                 return self._build_path(current_node)
@@ -77,10 +77,11 @@ class PathFinder():
             self._generate_and_process_a_neighbor_node(current_node, 0, -1)
             self._generate_and_process_a_neighbor_node(current_node, 1, 0)
             self._generate_and_process_a_neighbor_node(current_node, -1, 0)
-            self._generate_and_process_a_neighbor_node(current_node, 1, 1)
-            self._generate_and_process_a_neighbor_node(current_node, 1, -1)
-            self._generate_and_process_a_neighbor_node(current_node, -1, 1)
-            self._generate_and_process_a_neighbor_node(current_node, -1, -1)
+            if self._consider_diagonal_path:
+                self._generate_and_process_a_neighbor_node(current_node, 1, 1)
+                self._generate_and_process_a_neighbor_node(current_node, 1, -1)
+                self._generate_and_process_a_neighbor_node(current_node, -1, 1)
+                self._generate_and_process_a_neighbor_node(current_node, -1, -1)
             
         return result
             
@@ -89,19 +90,16 @@ class PathFinder():
         neighbor_col = current_node._col + delta_col
         if neighbor_row < 1 or neighbor_row > self._map_rows or neighbor_col < 1 or neighbor_col > self._map_cols:
             return
-        key_of_neighbor = Node.get_key_from_point(Point(neighbor_col, neighbor_row))
+        key_of_neighbor = Node.get_key_from_point(neighbor_col, neighbor_row)
         if self._tiles_info[key_of_neighbor]._blocked:
             return
         if key_of_neighbor in self._closed_map:
             return
         #Si el nodo destino está en diagonal, entonces valido que los nodos adyacentes no estén bloqueados
-        if abs(delta_row) == 1 and abs(delta_col) == 1:
-            if not self._consider_diagonal_path: return
-            neighbor1 = Node.get_key_from_point(Point(current_node._col, neighbor_row))
-            neighbor2 = Node.get_key_from_point(Point(neighbor_col, current_node._row))
-            tile1 = self._tiles_info[neighbor1]
-            tile2 = self._tiles_info[neighbor2]
-            if tile1._blocked and tile2._blocked:
+        if delta_col != 0 and delta_row != 0:
+            neighbor1 = Node.get_key_from_point(current_node._col, neighbor_row)
+            neighbor2 = Node.get_key_from_point(neighbor_col, current_node._row)
+            if self._tiles_info[neighbor1]._blocked and self._tiles_info[neighbor2]._blocked:
                 return
         
         cost_to_adjacent = self._cost_to_adjacent(delta_row, delta_col) + current_node._g
@@ -142,7 +140,7 @@ class PathFinder():
     
     def _add_to_open(self, node: Node):
         heapq.heappush(self._open_list, node)
-        self._open_map[node.get_key()] = node
+        self._open_map[node._key] = node
         
 PATH_FINDER = PathFinder()
     

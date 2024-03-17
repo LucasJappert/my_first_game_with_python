@@ -3,9 +3,9 @@ class Point:
         self.x = x
         self.y = y
         
-        def __eq__(self, other: Point):
-            if not isinstance(other, Point): return False
-            
-            if self.x == other.x and self.y == other.y: return True
-            
-            return False
+    def __eq__(self, other: "Point"):
+        if not isinstance(other, Point): return False
+        
+        if self.x == other.x and self.y == other.y: return True
+        
+        return False

@@ -8,7 +8,7 @@ class Player(MapObject):
 
     def __init__(self, tile_in: Tile, name: str, tiles_info: dict[str, Tile]):
         super().__init__(tile_in, name, MapObjectType.PLAYER, tiles_info)
-        self._set_speed(4)
+        self._set_speed(1.5)
 
     #region GETTERs
     #endregion

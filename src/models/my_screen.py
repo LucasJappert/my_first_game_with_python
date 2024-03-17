@@ -26,10 +26,10 @@ class MyScreen:
         screen_size = pygame.display.get_surface().get_size()
 
         # Scale the surface to the size of the screen
-        scaled_surface = pygame.transform.scale(MAP_VARIABLES.surface, screen_size)
+        # scaled_surface = pygame.transform.scale(MAP_VARIABLES.surface, screen_size)
 
         # Draw the scaled surface to the screen
-        pygame.display.get_surface().blit(scaled_surface, (0, 0))
+        pygame.display.get_surface().blit(MAP_VARIABLES.surface, (0, 0))
         # pygame.display.get_surface().blits([(scaled_surface, (0, 0))] * 2)
 
         # Update the display

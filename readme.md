@@ -27,16 +27,17 @@ To run linting rules with pylint, the virtual environment must be running, and n
 ---
 
 ### DOING
+- 🔵 Improve path finder when there are so many enemies
 - 🔵Update spritesheet of enemies and players from Nova
 
 ### TO DO
 - 🟡 Add some decoration on the ground
-- 🟡 Invest path finder algorithms and implements in MapObject class
 - 🟡 Implements collisions between objects
 - 🟡 Create LICENSE.md file with MIT license
 - 🟡 Create CONTRIBUTING.md file with instructions for contributing
 
 ### DONE
+- 🟢 2024-03-14 | Invest path finder algorithms and implements in MapObject class
 - 🟢 Implements spritesheet for players
 - 🟢 Implements spritesheet for enemies
 - 🟢 Implements tilemap for terrain to improve performance

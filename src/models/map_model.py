@@ -35,10 +35,11 @@ class Map():
                 self._tiles_info[Tile.get_tile_key(col, row)] = tile
         
         for i in range(Enemy.initial_enemies):
-            available_enemies = list(EnemyList)
-            enemy_name = random.choice(available_enemies).value.name
-            
+            # available_enemies = list(EnemyList)
+            # enemy_name = random.choice(available_enemies).value.name
             # enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
+            enemy_name = f"enemy_1"
+            
             random_tile = self.get_random_tile(True)
             self._enemies.append(Enemy(random_tile, enemy_name, self._tiles_info))
         
@@ -47,8 +48,9 @@ class Map():
         
     # region EVENTS
     def on_tile_updated(self, tile: Tile):
+        return
         self._refresh_tilemap()
-        print(f"tilemap was updated! {tile._position.x}, {tile._position.y}")        
+        # print(f"tilemap was updated! {tile._position.x}, {tile._position.y}")        
     # endregion
         
     # region GETTERS
@@ -79,8 +81,6 @@ class Map():
         # self._auxiliar_texts["mouse_position"] = f"x: {mouse_position.x}, y: {mouse_position.y}"
         self._auxiliar_texts["hovered_tile"] = f"x: {hovered_tile._position.x}, y: {hovered_tile._position.y}"
         self._hovered_tile = hovered_tile
-        
-        # self._tile_hovered = 
     
     # endregion
     
@@ -99,8 +99,9 @@ class Map():
         ordered_map_objects = self._get_ordered_map_objects()
         map_objects_group = pygame.sprite.Group()
         
-        for obj in ordered_map_objects:
-            obj.draw_path(map_objects_group)
+        # for obj in ordered_map_objects:
+        #     obj.draw_path(map_objects_group)
+        self._draw_depth_1(map_objects_group)
         
         for obj in ordered_map_objects:
             obj.draw(map_objects_group)
@@ -152,9 +153,6 @@ class Map():
                     pygame.draw.rect(MAP_VARIABLES.surface, (0, 0, 0), rect, 1)
                     tilemap.blit(square, rect)
                 tile_key = Tile.get_tile_key(x + 1, y + 1)
-                if self._tiles_info[tile_key]._blocked:
-                    pygame.draw.rect(MAP_VARIABLES.surface, (255, 0, 0), rect, 1)
-                    tilemap.blit(square, rect)
 
         # Devolver la superficie del tilemap
         self._tilemap = tilemap
@@ -168,5 +166,10 @@ class Map():
         ordered_list = sorted(objects, key=lambda obj: (obj._tile_in._position.y, obj._tile_in._position.x))
 
         return ordered_list
+    
+    def _draw_depth_1(self, map_objects_group: pygame.sprite.Group):
+        bloqued_tiles = list(filter(lambda tile: tile._blocked, self._tiles_info.values()))
+        for tile in bloqued_tiles:
+            map_objects_group.add(tile._sprite)
     
 MAP = Map()
