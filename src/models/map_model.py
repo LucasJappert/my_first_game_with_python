@@ -20,8 +20,9 @@ class Map():
     _hovered_tile: Tile = None
     _tilemap = None
     _auxiliar_texts: dict[str, str] = {}
-    _draw_grid = False
     _tiles_grid_col_row = TILES_GRID_COL_ROW
+    _draw_grid = False
+    _draw_paths = True
     
     def __init__(self):
         pass
@@ -35,10 +36,10 @@ class Map():
                 self._tiles_info[Tile.get_tile_key(col, row)] = tile
         
         for i in range(Enemy.initial_enemies):
-            # available_enemies = list(EnemyList)
-            # enemy_name = random.choice(available_enemies).value.name
-            # enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
-            enemy_name = f"enemy_1"
+            available_enemies = list(EnemyList)
+            enemy_name = random.choice(available_enemies).value.name
+            enemy_name = f"enemy_{random.randint(1, Enemy.types)}"
+            # enemy_name = f"enemy_1"
             
             random_tile = self.get_random_tile(True)
             enemy = Enemy(random_tile, enemy_name, self._tiles_info)
@@ -101,9 +102,7 @@ class Map():
         ordered_map_objects = self._get_ordered_map_objects()
         self.map_objects_group.empty()
         
-        # for obj in ordered_map_objects:
-        #     obj.draw_path(map_objects_group)
-        self._draw_depth_1()
+        self._draw_depth_1(ordered_map_objects)
         
         for obj in ordered_map_objects:
             obj.draw(self.map_objects_group)
@@ -169,9 +168,15 @@ class Map():
 
         return ordered_list
     
-    def _draw_depth_1(self):
+    def _draw_depth_1(self, ordered_map_objects: list[MapObject]):
         bloqued_tiles = list(filter(lambda tile: tile._blocked, self._tiles_info.values()))
         for tile in bloqued_tiles:
             self.map_objects_group.add(tile._sprite)
+            
+        if self._draw_paths:
+            for obj in ordered_map_objects:
+                obj.draw_path(self.map_objects_group)
+            
+        
     
 MAP = Map()

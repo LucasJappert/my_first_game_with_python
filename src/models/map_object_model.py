@@ -37,12 +37,14 @@ class MapObject():
     _direction: str = DIRECTIONS[0]
     _current_frame: int = 1
     _frame_counter = 0
-    _frame_rate = 10
+    _frame_rate = 5
     _scale_respect_to_tile: float = 2
     _collide_circle_radius: int = 30
     _current_path: list[Point] = []
     _draw_path = True
     _id = 0
+    _tries_of_movement = 0
+    _tries_of_movement_limit = 50
 
     def __init__(self, tile_in: Tile, name: str, object_type: MapObjectType, tiles_info: dict[str, Tile]):
         global _IDS_COUNTER
@@ -168,13 +170,24 @@ class MapObject():
         if self._target_position is None:
             if len(self._current_path) == 0: return
 
-            next_tile_to_move = self._current_path.pop(0)
+            next_point_to_move = self._current_path[0]
+            # if len(self._current_path) > 0:
+            #     self.find_and_set_shortest_path(self._current_path[-1])
 
-            new_tile_in = self._tiles_info[Tile.get_tile_key(next_tile_to_move.x, next_tile_to_move.y)]
+            new_tile_in = self._tiles_info[Tile.get_tile_key(next_point_to_move.x, next_point_to_move.y)]
+            if new_tile_in._blocked:
+                self._tries_of_movement += 1
+                if self._tries_of_movement > self._tries_of_movement_limit:
+                    self.find_and_set_shortest_path(self._current_path[-1])
+                    self._tries_of_movement = 0
+                return
+            
             self._set_my_tile_in(new_tile_in)
+            
+            self._current_path = self._current_path[1:]
 
-            target_x = int((next_tile_to_move.x - 0.5) * self._tile_in._size.x)
-            target_y = int((next_tile_to_move.y - 0.5) * self._tile_in._size.y)
+            target_x = int((next_point_to_move.x - 0.5) * self._tile_in._size.x)
+            target_y = int((next_point_to_move.y - 0.5) * self._tile_in._size.y)
             self._set_target_position(Point(target_x, target_y))
 
         # Calculate the direction to the target
